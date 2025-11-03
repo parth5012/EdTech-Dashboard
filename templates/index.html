@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Readiness Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/placement.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    PlacementReady
+                </h1>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Student+User&background=2563eb&color=fff" alt="User" class="user-avatar">
+                    <span class="user-name">Student User</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <ul class="nav-links">
+                    <li class="nav-item active">
+                        <a href="#overview" class="nav-link">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#resume" class="nav-link">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Resume Analysis</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tests" class="nav-link">
+                            <i class="fas fa-code"></i>
+                            <span>Test Scores</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#certifications" class="nav-link">
+                            <i class="fas fa-award"></i>
+                            <span>Certifications</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#interviews" class="nav-link">
+                            <i class="fas fa-comments"></i>
+                            <span>Mock Interviews</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Overview Section -->
+                <section id="overview" class="content-section active">
+                    <div class="section-header">
+                        <h2>Dashboard Overview</h2>
+                        <p>Track your placement preparation progress</p>
+                    </div>
+
+                    <!-- Metrics Cards -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon overall">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h3>75%</h3>
+                                <p>Overall Readiness</p>
+                                <span class="trend positive">+5% this week</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon resume">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h3>82%</h3>
+                                <p>Resume Score</p>
+                                <span class="trend positive">+8% this week</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon test">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h3>68%</h3>
+                                <p>Test Performance</p>
+                                <span class="trend positive">+12% this week</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-icon interview">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h3>4/6</h3>
+                                <p>Certifications</p>
+                                <span class="trend positive">2 new</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="charts-row">
+                        <div class="chart-container">
+                            <h3>Skill Progress</h3>
+                            <canvas id="skillRadarChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Progress Timeline</h3>
+                            <canvas id="progressChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="recommendations-section">
+                        <h3>Recommended Actions</h3>
+                        <div class="recommendations-grid">
+                            <div class="recommendation-card high-priority">
+                                <div class="priority-badge">High Priority</div>
+                                <h4>Improve Data Structures Knowledge</h4>
+                                <p>Practice 20 more problems on LeetCode</p>
+                                <button class="action-btn">Start Practicing</button>
+                            </div>
+                            <div class="recommendation-card medium-priority">
+                                <div class="priority-badge">Medium Priority</div>
+                                <h4>Add Project Metrics</h4>
+                                <p>Quantify achievements in your resume projects</p>
+                                <button class="action-btn">Update Resume</button>
+                            </div>
+                            <div class="recommendation-card low-priority">
+                                <div class="priority-badge">Low Priority</div>
+                                <h4>Communication Skills</h4>
+                                <p>Schedule a mock interview session</p>
+                                <button class="action-btn">Schedule</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Resume Analysis Section -->
+                <section id="resume" class="content-section">
+                    <div class="section-header">
+                        <h2>Resume Analysis</h2>
+                        <p>AI-powered resume evaluation and improvement suggestions</p>
+                    </div>
+
+                    <div class="resume-upload-section">
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>Upload Your Resume</h3>
+                            <p>Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                            <input type="file" id="resumeFile" accept=".pdf,.doc,.docx" hidden>
+                            <button class="upload-btn" onclick="document.getElementById('resumeFile').click()">
+                                Choose File
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="analysis-results" id="analysisResults" style="display: none;">
+                        <div class="score-breakdown">
+                            <h3>Resume Score: <span id="overallScore">82%</span></h3>
+                            <div class="score-details">
+                                <div class="score-item">
+                                    <label>ATS Compatibility</label>
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: 90%"></div>
+                                    </div>
+                                    <span>90%</span>
+                                </div>
+                                <div class="score-item">
+                                    <label>Keyword Optimization</label>
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: 75%"></div>
+                                    </div>
+                                    <span>75%</span>
+                                </div>
+                                <div class="score-item">
+                                    <label>Achievement Quantification</label>
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: 60%"></div>
+                                    </div>
+                                    <span>60%</span>
+                                </div>
+                                <div class="score-item">
+                                    <label>Readability</label>
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: 88%"></div>
+                                    </div>
+                                    <span>88%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="improvement-suggestions">
+                            <h3>Improvement Suggestions</h3>
+                            <div class="suggestion-list">
+                                <div class="suggestion-item">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <div>
+                                        <strong>Add quantifiable achievements</strong>
+                                        <p>Include metrics like "Improved performance by 40%" or "Reduced costs by $50K"</p>
+                                    </div>
+                                </div>
+                                <div class="suggestion-item">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <div>
+                                        <strong>Include more technical keywords</strong>
+                                        <p>Add skills like Python, React, AWS, Docker to match job descriptions</p>
+                                    </div>
+                                </div>
+                                <div class="suggestion-item">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <div>
+                                        <strong>Improve project descriptions</strong>
+                                        <p>Use STAR method (Situation, Task, Action, Result) for project explanations</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Test Scores Section -->
+                <section id="tests" class="content-section">
+                    <div class="section-header">
+                        <h2>Test Scores & Performance</h2>
+                        <p>Track your coding and aptitude test performance</p>
+                    </div>
+                    <div class="coming-soon">
+                        <i class="fas fa-laptop-code"></i>
+                        <h3>Test Scores Module</h3>
+                        <p>This section will integrate with coding platforms and display your performance analytics</p>
+                    </div>
+                </section>
+
+                <!-- Other sections would follow similar structure -->
+            </div>
+        </div>
+    </div>
+
+    <script src="static/js/script.js"></script>
+</body>
+</html>
