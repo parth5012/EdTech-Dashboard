@@ -229,3 +229,18 @@ def parse_input(user_input):
 #             st.warning("Your CSV must have 'Test' and 'Score' columns.")
 #     except Exception as e:
 #         st.error(f"Error plotting test scores: {e}")
+def get_performance_score(json_content):
+    platform, username = parse_input(json_content['platform link'][0])
+    performance = 0
+    if platform == 'leetcode':
+        performance = fetch_leetcode_data(username).get('acceptanceRate')
+    elif platform == "github":
+        performance = fetch_github_data(username)
+    elif platform == "codeforces":
+        performance = fetch_codeforces_data(username)
+    else:
+        # It's a platform you don't recognize.
+        # You could log this or set a specific value.
+        print(f"Warning: Unknown platform '{platform}' encountered.")
+        performance = -1  # Or None, or -1, etc.
+    return performance

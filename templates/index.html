@@ -1,266 +1,235 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placement Readiness Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="static/placement.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
-                <h1 class="logo">
-                    <i class="fas fa-graduation-cap"></i>
-                    PlacementReady
-                </h1>
-            </div>
-            <div class="header-right">
-                <div class="user-profile">
-                    <img src="https://ui-avatars.com/api/?name=Student+User&background=2563eb&color=fff" alt="User" class="user-avatar">
-                    <span class="user-name">Student User</span>
-                </div>
-            </div>
-        </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlacementReady</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Sidebar -->
-            <nav class="sidebar">
-                <ul class="nav-links">
-                    <li class="nav-item active">
-                        <a href="#overview" class="nav-link">
-                            <i class="fas fa-chart-pie"></i>
-                            <span>Overview</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#resume" class="nav-link">
-                            <i class="fas fa-file-alt"></i>
-                            <span>Resume Analysis</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#tests" class="nav-link">
-                            <i class="fas fa-code"></i>
-                            <span>Test Scores</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#certifications" class="nav-link">
-                            <i class="fas fa-award"></i>
-                            <span>Certifications</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#interviews" class="nav-link">
-                            <i class="fas fa-comments"></i>
-                            <span>Mock Interviews</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <!-- Content Area -->
-            <div class="content-area">
-                <!-- Overview Section -->
-                <section id="overview" class="content-section active">
-                    <div class="section-header">
-                        <h2>Dashboard Overview</h2>
-                        <p>Track your placement preparation progress</p>
-                    </div>
-
-                    <!-- Metrics Cards -->
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-icon overall">
-                                <i class="fas fa-tachometer-alt"></i>
-                            </div>
-                            <div class="metric-info">
-                                <h3>75%</h3>
-                                <p>Overall Readiness</p>
-                                <span class="trend positive">+5% this week</span>
-                            </div>
-                        </div>
-
-                        <div class="metric-card">
-                            <div class="metric-icon resume">
-                                <i class="fas fa-file-contract"></i>
-                            </div>
-                            <div class="metric-info">
-                                <h3>82%</h3>
-                                <p>Resume Score</p>
-                                <span class="trend positive">+8% this week</span>
-                            </div>
-                        </div>
-
-                        <div class="metric-card">
-                            <div class="metric-icon test">
-                                <i class="fas fa-laptop-code"></i>
-                            </div>
-                            <div class="metric-info">
-                                <h3>68%</h3>
-                                <p>Test Performance</p>
-                                <span class="trend positive">+12% this week</span>
-                            </div>
-                        </div>
-
-                        <div class="metric-card">
-                            <div class="metric-icon interview">
-                                <i class="fas fa-comments"></i>
-                            </div>
-                            <div class="metric-info">
-                                <h3>4/6</h3>
-                                <p>Certifications</p>
-                                <span class="trend positive">2 new</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Charts Row -->
-                    <div class="charts-row">
-                        <div class="chart-container">
-                            <h3>Skill Progress</h3>
-                            <canvas id="skillRadarChart"></canvas>
-                        </div>
-                        <div class="chart-container">
-                            <h3>Progress Timeline</h3>
-                            <canvas id="progressChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Recommendations -->
-                    <div class="recommendations-section">
-                        <h3>Recommended Actions</h3>
-                        <div class="recommendations-grid">
-                            <div class="recommendation-card high-priority">
-                                <div class="priority-badge">High Priority</div>
-                                <h4>Improve Data Structures Knowledge</h4>
-                                <p>Practice 20 more problems on LeetCode</p>
-                                <button class="action-btn">Start Practicing</button>
-                            </div>
-                            <div class="recommendation-card medium-priority">
-                                <div class="priority-badge">Medium Priority</div>
-                                <h4>Add Project Metrics</h4>
-                                <p>Quantify achievements in your resume projects</p>
-                                <button class="action-btn">Update Resume</button>
-                            </div>
-                            <div class="recommendation-card low-priority">
-                                <div class="priority-badge">Low Priority</div>
-                                <h4>Communication Skills</h4>
-                                <p>Schedule a mock interview session</p>
-                                <button class="action-btn">Schedule</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Resume Analysis Section -->
-                <section id="resume" class="content-section">
-                    <div class="section-header">
-                        <h2>Resume Analysis</h2>
-                        <p>AI-powered resume evaluation and improvement suggestions</p>
-                    </div>
-
-                    <div class="resume-upload-section">
-                        <div class="upload-area" id="uploadArea">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <h3>Upload Your Resume</h3>
-                            <p>Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
-                            <input type="file" id="resumeFile" accept=".pdf,.doc,.docx" hidden>
-                            <button class="upload-btn" onclick="document.getElementById('resumeFile').click()">
-                                Choose File
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="analysis-results" id="analysisResults" style="display: none;">
-                        <div class="score-breakdown">
-                            <h3>Resume Score: <span id="overallScore">82%</span></h3>
-                            <div class="score-details">
-                                <div class="score-item">
-                                    <label>ATS Compatibility</label>
-                                    <div class="score-bar">
-                                        <div class="score-fill" style="width: 90%"></div>
-                                    </div>
-                                    <span>90%</span>
-                                </div>
-                                <div class="score-item">
-                                    <label>Keyword Optimization</label>
-                                    <div class="score-bar">
-                                        <div class="score-fill" style="width: 75%"></div>
-                                    </div>
-                                    <span>75%</span>
-                                </div>
-                                <div class="score-item">
-                                    <label>Achievement Quantification</label>
-                                    <div class="score-bar">
-                                        <div class="score-fill" style="width: 60%"></div>
-                                    </div>
-                                    <span>60%</span>
-                                </div>
-                                <div class="score-item">
-                                    <label>Readability</label>
-                                    <div class="score-bar">
-                                        <div class="score-fill" style="width: 88%"></div>
-                                    </div>
-                                    <span>88%</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="improvement-suggestions">
-                            <h3>Improvement Suggestions</h3>
-                            <div class="suggestion-list">
-                                <div class="suggestion-item">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    <div>
-                                        <strong>Add quantifiable achievements</strong>
-                                        <p>Include metrics like "Improved performance by 40%" or "Reduced costs by $50K"</p>
-                                    </div>
-                                </div>
-                                <div class="suggestion-item">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    <div>
-                                        <strong>Include more technical keywords</strong>
-                                        <p>Add skills like Python, React, AWS, Docker to match job descriptions</p>
-                                    </div>
-                                </div>
-                                <div class="suggestion-item">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    <div>
-                                        <strong>Improve project descriptions</strong>
-                                        <p>Use STAR method (Situation, Task, Action, Result) for project explanations</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Test Scores Section -->
-                <section id="tests" class="content-section">
-                    <div class="section-header">
-                        <h2>Test Scores & Performance</h2>
-                        <p>Track your coding and aptitude test performance</p>
-                    </div>
-                    <div class="coming-soon">
-                        <i class="fas fa-laptop-code"></i>
-                        <h3>Test Scores Module</h3>
-                        <p>This section will integrate with coding platforms and display your performance analytics</p>
-                    </div>
-                </section>
-
-                <!-- Other sections would follow similar structure -->
-            </div>
+  <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
+          </div>
+          <h1 class="text-2xl font-bold text-gray-900">PlacementReady</h1>
         </div>
+
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="#features" class="text-gray-600 hover:text-blue-600 transition">Features</a>
+          <a href="#about" class="text-gray-600 hover:text-blue-600 transition">About</a>
+          <a href="#contact" class="text-gray-600 hover:text-blue-600 transition">Contact</a>
+          <button
+            onclick="toggleModal(true)"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+          >
+            Get Started
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-5xl font-bold text-gray-900 mb-6 leading-tight">
+          Your Path to <span class="text-blue-600">Placement Success</span>
+        </h2>
+        <p class="text-xl text-gray-600 mb-8">
+          Track your progress, improve your skills, and get placement-ready with our comprehensive platform designed for students.
+        </p>
+        <div class="flex gap-4 flex-wrap">
+          <button
+            onclick="toggleModal(true)"
+            class="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-lg shadow-lg hover:shadow-xl flex items-center gap-2"
+          >
+            <i data-lucide="upload" class="w-5 h-5"></i> Upload Resume & Start
+          </button>
+          <button class="px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition font-medium text-lg border-2 border-blue-600">
+            Learn More
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-4">
+        {% for stat in [
+          {'icon':'trending-up','color':'purple','value':'75%','label':'Avg. Readiness','change':'+5% this week'},
+          {'icon':'file-text','color':'pink','value':'82%','label':'Resume Score','change':'+8% this week'},
+          {'icon':'code','color':'blue','value':'68%','label':'Test Score','change':'+12% this week'},
+          {'icon':'award','color':'green','value':'4/6','label':'Certifications','change':'2 new'}
+        ] %}
+        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition text-center">
+          <div class="w-14 h-14 bg-{{stat.color}}-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
+            <i data-lucide="{{stat.icon}}" class="w-7 h-7 text-{{stat.color}}-600"></i>
+          </div>
+          <div class="text-3xl font-bold text-gray-900 mb-2">{{stat.value}}</div>
+          <div class="text-gray-600">{{stat.label}}</div>
+          <div class="text-green-500 text-sm font-medium mt-1">{{stat.change}}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="max-w-7xl mx-auto px-6 py-12">
+      <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 shadow-2xl text-center">
+        <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mb-6 mx-auto">
+          <i data-lucide="upload" class="w-10 h-10 text-blue-600"></i>
+        </div>
+        <h2 class="text-4xl font-bold text-white mb-4">Ready to Get Started?</h2>
+        <p class="text-xl text-blue-100 mb-8">
+          Upload your resume now and get instant feedback on your placement readiness
+        </p>
+        <button
+          onclick="toggleModal(true)"
+          class="px-10 py-5 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition font-bold text-lg shadow-xl hover:shadow-2xl inline-flex items-center gap-3"
+        >
+          <i data-lucide="file-text" class="w-6 h-6"></i> Upload Your Resume
+        </button>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="max-w-7xl mx-auto px-6 py-20">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold text-gray-900 mb-4">Everything You Need to Succeed</h2>
+        <p class="text-xl text-gray-600">Comprehensive tools to track and improve your placement readiness</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition">
+          <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
+            <i data-lucide="file-text" class="w-8 h-8 text-purple-600"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Resume Analysis</h3>
+          <p class="text-gray-600">
+            Get detailed feedback on your resume with AI-powered insights and improvement suggestions.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition">
+          <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+            <i data-lucide="code" class="w-8 h-8 text-blue-600"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Test Preparation</h3>
+          <p class="text-gray-600">
+            Practice coding problems, aptitude tests, and technical assessments to boost your scores.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition">
+          <div class="w-16 h-16 bg-pink-100 rounded-xl flex items-center justify-center mb-6">
+            <i data-lucide="message-square" class="w-8 h-8 text-pink-600"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">Mock Interviews</h3>
+          <p class="text-gray-600">
+            Practice with realistic interview scenarios and get feedback to improve your performance.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Signup Modal -->
+    <div
+      id="signupModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8 relative my-8">
+        <button
+          onclick="toggleModal(false)"
+          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl"
+        >
+          ×
+        </button>
+
+        <div class="text-center mb-8">
+          <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mb-4 mx-auto">
+            <i data-lucide="graduation-cap" class="w-8 h-8 text-white"></i>
+          </div>
+          <h3 class="text-3xl font-bold text-gray-900 mb-2">Get Started</h3>
+          <p class="text-gray-600">Create your account and upload your resume to begin</p>
+        </div>
+
+        <form
+          method="post"
+          action="{{ url_for('upload_resume') }}"
+          enctype="multipart/form-data"
+          class="space-y-6"
+        >
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+              <input
+                type="text"
+                name="username"
+                required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:outline-none transition"
+                placeholder="Enter username"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                name="email"
+                required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:outline-none transition"
+                placeholder="Enter email"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Resume</label>
+            <input
+              type="file"
+              name="resume"
+              accept=".pdf,.doc,.docx"
+              required
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:outline-none transition bg-gray-50"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full px-6 py-4 rounded-lg transition font-medium text-lg shadow-lg bg-blue-600 text-white hover:bg-blue-700"
+          >
+            Create Account & Analyze Resume
+          </button>
+        </form>
+      </div>
     </div>
 
-    <script src="static/js/script.js"></script>
-</body>
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-20">
+      <div class="max-w-7xl mx-auto px-6 text-center">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
+          </div>
+          <h3 class="text-2xl font-bold">PlacementReady</h3>
+        </div>
+        <p class="text-gray-400 mb-6">Empowering students to achieve their placement goals</p>
+        <div class="flex justify-center gap-8 text-gray-400">
+          <a href="#" class="hover:text-white transition">Privacy Policy</a>
+          <a href="#" class="hover:text-white transition">Terms of Service</a>
+          <a href="#" class="hover:text-white transition">Contact Us</a>
+        </div>
+        <p class="text-gray-500 mt-8">© 2025 PlacementReady. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      lucide.createIcons();
+      function toggleModal(show) {
+        const modal = document.getElementById("signupModal");
+        modal.classList.toggle("hidden", !show);
+      }
+    </script>
+  </body>
 </html>
