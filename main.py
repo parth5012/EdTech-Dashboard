@@ -47,6 +47,9 @@ def dashboard():
         performance= None
     return render_template('dashboard.html', quote=analysis_quote, readiness_score=readiness_score, n_crtf=n_crtf, performance=performance)
 
+@app.route('/dashboard/certificates')
+def certificates():
+    return render_template('certificates.html')
 
 if __name__ == "__main__":
     app.run()

@@ -1,12 +1,12 @@
 import requests
-"""Fetch specific badge details"""
+# """Fetch specific badge details"""
 url = f"https://api.credly.com/v1/badges/bc86b51a-6aff-4815-a864-2d40b63d3966"
-try:
-    response = requests.get(url)
-    response.raise_for_status()
-    print( response.json())
-except requests.exceptions.RequestException as e:
-    print({"error": str(e)})
+# try:
+#     response = requests.get(url)
+#     response.raise_for_status()
+#     print( response.json())
+# except requests.exceptions.RequestException as e:
+#     print({"error": str(e)})
 
 def verify_public_badge(badge_url):
     response = requests.get(badge_url)
