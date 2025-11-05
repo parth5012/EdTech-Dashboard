@@ -1,3 +1,5 @@
 .lock
 .toml
 .python-version
+.venv
+.vscode
