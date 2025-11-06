@@ -1,7 +1,7 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.document_loaders import PyPDFLoader,Docx2txtLoader
 from langchain_core.output_parsers import JsonOutputParser,StrOutputParser
-from utils.prompt import prompt_extract,analyser_prompt,readiness_prompt
+from utils.prompt import prompt_extract,analyser_prompt,readiness_prompt,interview_prompt
 import os
 from dotenv import load_dotenv
 
@@ -40,3 +40,7 @@ def get_readiness_score(resume_content):
     chain = readiness_prompt | llm | StrOutputParser()
     return chain.invoke(resume_content)
 
+
+def get_interview_ques(job_desc):
+    chain = interview_prompt | llm | JsonOutputParser()
+    return chain.invoke(job_desc['interview_questions'])
