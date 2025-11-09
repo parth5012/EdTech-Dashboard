@@ -93,3 +93,37 @@ check_prompt =PromptTemplate.from_template( '''
 You are an expert interviewer , check the ques {ques} and verify if the answer given below is the right answer for the ques above 
 Answer : {ans}
                                            only return ans as True or False.''')
+
+ats_prompt = PromptTemplate.from_template("""
+    You are an expert ATS (Applicant Tracking System) and a professional tech recruiter.
+    Your task is to analyze a resume against a job description and provide a detailed scoring report.
+
+    Please perform the following steps:
+    1.  Analyze the [JOB DESCRIPTION] to identify the key skills, qualifications, and experiences required.
+    2.  Carefully read the [RESUME] and find evidence of these requirements.
+    3.  Calculate a "match_score" as a percentage (0-100) based on how well the resume fits the job requirements.
+    4.  Provide a concise "summary" (2-3 sentences) of the candidate's strengths and weaknesses for this specific role.
+    5.  List the key "missing_skills" or "missing_qualifications" that are in the job description but not evident in the resume.
+    6.  List the key "matched_skills" or "matched_qualifications" that are present in both.
+
+    Provide your final output in a single, parsable JSON format. Do not include any other text or explanations outside of the JSON block.
+
+    The JSON format must be:
+    {{
+      "match_score": <number>,
+      "summary": "<string>",
+      "matched_skills": ["<string>", "<string>", ...],
+      "missing_skills": ["<string>", "<string>", ...]
+    }}
+
+    ---
+    [JOB DESCRIPTION]
+    {jd_text}
+    ---
+    [RESUME]
+    {resume_text}
+    ---
+                                          + IMPORTANT: You MUST reply with *only* the JSON object.
++ Do not include markdown fences like ```json, introductions, or any other text.
++ Your entire response must be the raw JSON string.
+    """)

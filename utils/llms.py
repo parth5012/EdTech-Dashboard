@@ -1,7 +1,8 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.document_loaders import PyPDFLoader,Docx2txtLoader
 from langchain_core.output_parsers import JsonOutputParser,StrOutputParser
-from utils.prompt import prompt_extract,analyser_prompt,readiness_prompt,interview_prompt,check_prompt
+from utils.prompt import prompt_extract,analyser_prompt,readiness_prompt,interview_prompt,check_prompt,ats_prompt
+from langchain_core.runnables import RunnableLambda,RunnableParallel
 import os
 from dotenv import load_dotenv
 
@@ -45,10 +46,18 @@ def get_interview_ques(job_desc):
     chain = interview_prompt | llm | JsonOutputParser()
     res = chain.invoke(job_desc)
     print(res)
-    return res['interview_ques']
+    return res['interview_questions']
 
 
 def is_answer(ques,answer):
     chain = check_prompt | llm | StrOutputParser()
     res =chain.invoke({'ques':ques,'ans':answer})
     return res
+
+def get_ats_score(resume_content,job_desc):
+    process_inputs = RunnableParallel(
+        jd_text=RunnableLambda(lambda x: x["jd_text"]),
+        resume_text=RunnableLambda(lambda x: x["resume_text"])
+    )
+    chain = process_inputs | ats_prompt | llm |StrOutputParser() | JsonOutputParser
+    return chain.invoke({'jd_text':job_desc,'resume_text':resume_content})
