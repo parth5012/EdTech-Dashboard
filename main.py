@@ -24,6 +24,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create it if it doesn’t exist
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 resume_path = 0
+user_answers = {}
 
 
 @app.route("/")
@@ -59,8 +60,8 @@ def dashboard():
     performance = 0
     # Slow since inference calls have high latency
     # ats = get_ats_score(content, session['desc'])
-    # Latency Improvement 
-    ats = calculate_ats_score(content,session['desc'])['score']
+    # Latency Improvement
+    ats = calculate_ats_score(content, session["desc"])["score"]
     # ats = 25
     if json_content:
         if json_content["platform link"]:
@@ -195,19 +196,18 @@ def submit():
         ques = request.form["question"]
         # Store ans in db
         # storing in placeholder db for now
-        if "user_answers" not in session:
-            session["user_answers"] = {}
+        # if "user_answers" not in session:
+        #     session["user_answers"] = {}
         is_right = is_answer(ques, ans)
-        session["user_answers"][ques] = (ans, is_right)
-        return jsonify(
-            {"is_answer": is_right, "message": "Your Answer is Submitted"}
-        )
+        user_answers[ques] = (ans, is_right)
+        print(user_answers)
+        return jsonify({"is_answer": is_right, "message": "Your Answer is Submitted"})
 
 
 @app.route("/results")
 def results():
-    answers = session['user_answers']
-    return render_template("results.html",answers=answers)
+    answers = user_answers
+    return render_template("results.html", answers=answers)
 
 
 if __name__ == "__main__":

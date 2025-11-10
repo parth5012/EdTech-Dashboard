@@ -1,0 +1,5 @@
+answers = {"\r\n            Tell me about yourself and why you're interested in a Junior Data Scientist role at Google, specifically within the gReach program.\r\n          ": ('YO', 'False'), "Imagine you're given a dataset of YouTube video ad performance for a client in the telecommunications industry. What key metrics would you analyze to assess their success, and why?": ('YO', 'False'), 'What is the difference between supervised and unsupervised learning? Provide an example of each.': ('YO', 'False'), 'Describe a project where you used Python (or R) for data analysis. What libraries did you primarily use, and for what purpose?': ('YO', 'False'), "You're tasked with creating a proposal for a new YouTube ad campaign. What information would you gather, and how would you structure your proposal?": ('YO', 'False')}
+for question,data in answers.items():
+    print(question)
+    print(data[0])
+    print(data[1])
