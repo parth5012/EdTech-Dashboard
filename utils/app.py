@@ -4,7 +4,7 @@ from sqlalchemy.orm import DeclarativeBase
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder='../templates')
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")

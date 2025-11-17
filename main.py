@@ -40,6 +40,15 @@ sentry_sdk.init(
 resume_path = 0
 user_answers = {}
 
+uri = os.getenv("URI")
+app.config["SQLALCHEMY_DATABASE_URI"] = uri
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,  # Verify connections before using them
+    "pool_recycle": 300,  # Recycle connections after 5 minutes
+    "connect_args": {"sslmode": "require", "connect_timeout": 10},
+}
+# db.init_app(app)
+
 
 @app.route("/")
 def home():

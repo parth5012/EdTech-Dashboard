@@ -1,4 +1,4 @@
-from app import db,app
+from utils.app import db,app
 import uuid
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import types, Integer, String, ForeignKey, Boolean
