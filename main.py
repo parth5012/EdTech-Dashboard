@@ -18,7 +18,10 @@ import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from dotenv import load_dotenv
 from utils.test_cases import call_gemini_api
+from utils.app import app,db
 
+
+session = db.session
 load_dotenv()
 dsn=os.getenv("DSN")
 
@@ -27,14 +30,6 @@ sentry_sdk.init(
     integrations=[FlaskIntegration(),],
     traces_sample_rate=1.0
 )
-
-app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-
-UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create it if it doesn’t exist
-
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 resume_path = 0
 user_answers = {}
