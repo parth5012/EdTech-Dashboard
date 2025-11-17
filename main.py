@@ -19,9 +19,15 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from dotenv import load_dotenv
 from utils.test_cases import call_gemini_api
 from utils.app import app,db
-
-
-session = db.session
+from utils.models import (
+    InterviewAnswer,
+    InterviewQuestion,
+    MockInterview,
+    User,
+    JobApplication,
+    JobDescription,
+    Resume,
+)
 load_dotenv()
 dsn=os.getenv("DSN")
 
@@ -51,6 +57,7 @@ def upload_resume():
         resume.save(filepath)
         global resume_path
         resume_path = filepath
+        resume = Resume()
         # session["desc"] = desc
 
     return redirect(url_for("dashboard"))
