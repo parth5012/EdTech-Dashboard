@@ -9,6 +9,7 @@ from utils.prompt import (
     check_prompt,
     ats_prompt,
     cover_letter_prompt,
+    job_details_prompt,
 )
 from langchain_core.runnables import RunnableLambda, RunnableParallel
 import os
@@ -23,17 +24,17 @@ llm = ChatGoogleGenerativeAI(
 
 
 def get_resume_content(resume):
+    content = []
     if resume.endswith(".pdf"):
         loader = PyPDFLoader(resume)
         content = loader.load()
-
-    if resume.endswith(".docx"):
+    elif resume.endswith(".docx"):
         loader = Docx2txtLoader(resume)
         content = loader.load()
 
     resume_content = ""
-    for i in range(len(content)):
-        resume_content += content[i].page_content
+    for page in content:
+        resume_content += page.page_content
     return resume_content
 
 
@@ -90,3 +91,8 @@ def generate_cover_letter(resume_content, job_desc):
         | JsonOutputParser
     )
     return chain.invoke({"job_desc": job_desc, "resume": resume_content})
+
+
+def get_job_details(job_desc):
+    chain = job_details_prompt | llm | JsonOutputParser()
+    return chain.invoke(job_desc)

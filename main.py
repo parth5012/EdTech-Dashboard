@@ -9,6 +9,7 @@ from utils.llms import (
     is_answer,
     get_interview_ques,
     get_ats_score,
+    get_job_details,
 )
 from utils.stats import get_performance_score
 from utils.verification import verify_public_badge
@@ -29,6 +30,7 @@ from utils.models import (
     JobDescription,
     Resume,
 )
+from uuid import UUID
 
 load_dotenv()
 dsn = os.getenv("DSN")
@@ -86,7 +88,7 @@ def login():
         password = request.form["password"]
 
         user = User.query.filter_by(email=email).first()
-        session['user'] = user
+        session["user"] = user
         if user and check_password_hash(user.password, password):
             session["user"] = user.username
             return redirect("/")
@@ -105,12 +107,19 @@ def upload_resume():
         desc = request.form["job_description"]
         session["desc"] = desc
         resume.save(filepath)
-        user = session['user']
+        content = get_resume_content(filepath)
+        email = request.form.get("email")
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return redirect(url_for("signup"))
+        session["user_id"] = user.id
         # resume_path = filepath
-        resume = Resume()
+        resume = Resume(user_id=user.id, resume_text=content)
         if os.path.exists(filepath):
             os.remove(filepath)
         # session["desc"] = desc
+        db.session.add(resume)
+        db.session.commit()
 
     return redirect(url_for("dashboard"))
 
@@ -119,7 +128,19 @@ def upload_resume():
 def dashboard():
     if "desc" not in session:
         return redirect(url_for("home"))
-    content = get_resume_content(resume_path)
+    # user dict
+    user_id = session["user_id"]
+    resume = Resume.query.filter_by(user_id=user_id).first()
+    content = resume.resume_text
+    desc = session["desc"]
+    details = get_job_details(desc)
+    if not details["title"]:
+        return redirect(url_for("home"))
+    job_desc = JobDescription(
+        job_title=details["title"], company_name=details["company"], job_desc=desc
+    )
+    db.session.add(job_desc)
+    db.session.flush()
     json_content = get_json_output(content)
     session["content"] = json_content
     analysis_quote = get_str_output(content)
@@ -130,12 +151,24 @@ def dashboard():
     # Latency Improvement
     ats = calculate_ats_score(content, session["desc"])["score"]
     # ats = 25
+    n_crtf = len(json_content["certifications"])
+    job_application = JobApplication(
+        user_id=user_id,
+        resume_id=resume.resume_id,
+        job_description_id=job_desc.job_description_id,
+        ats_score=float(ats),
+        analysis_summary=analysis_quote,
+        certifications_count=n_crtf,
+    )
     if json_content:
         if json_content["platform link"]:
             performance = get_performance_score(json_content=json_content)
-        n_crtf = len(json_content["certifications"])
+        job_application.query.update(values={"certifications_count": n_crtf})
     else:
         performance = None
+
+    db.session.add(job_application)
+    db.session.commit()
     return render_template(
         "dashboard.html",
         quote=analysis_quote,
