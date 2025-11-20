@@ -20,15 +20,21 @@
         </div>
 
         <nav class="hidden md:flex items-center gap-8">
-          <a href="#features" class="text-gray-600 hover:text-blue-600 transition">Features</a>
-          <a href="#about" class="text-gray-600 hover:text-blue-600 transition">About</a>
-          <a href="#contact" class="text-gray-600 hover:text-blue-600 transition">Contact</a>
+           
           <button
-            onclick="toggleModal(true)"
+            onclick="window.location.href='/login'"
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
           >
-            Get Started
+            Login
           </button>
+
+          <button
+            onclick="window.location.href='/signup'"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+          >
+            Signup
+          </button>
+
         </nav>
       </div>
     </header>

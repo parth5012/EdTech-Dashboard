@@ -19,6 +19,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from dotenv import load_dotenv
 from utils.test_cases import call_gemini_api
 from utils.app import app,db
+from werkzeug.security import generate_password_hash, check_password_hash
 from utils.models import (
     InterviewAnswer,
     InterviewQuestion,
@@ -53,6 +54,43 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 @app.route("/")
 def home():
     return render_template("index.html")
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form["username"]
+        email = request.form["email"]
+        password = request.form["password"]
+
+        # Hash password using Werkzeug
+        hashed_password = generate_password_hash(password)
+
+        new_user = User(username=username, email=email, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect("/login")
+
+    return render_template("signup.html")
+
+
+# Login Route
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        user = User.query.filter_by(email=email).first()
+
+        if user and check_password_hash(user.password, password):
+            session["user"] = user.username
+            return redirect("/")
+        else:
+            return "Invalid email or password"
+
+    return render_template("login.html")
+    
 
 
 @app.route("/upload_resume", methods=["post"])
@@ -250,4 +288,4 @@ def test_llm_call():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
