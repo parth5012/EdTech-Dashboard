@@ -93,9 +93,18 @@ Job Description:
 {job_desc}""")
 
 check_prompt = PromptTemplate.from_template("""
-You are an expert interviewer , check the ques {ques} and verify if the answer given below is the right answer for the ques above 
-Answer : {ans}
-                                           only return ans as True or False.""")
+As an expert interviewer , evaluate the provided answer for the given interview question.
+
+## ❓ Interview Question
+{ques}
+
+## ✍️ Candidate Answer
+{ans}
+
+Your task is to:
+1.  **Analyze** the question and the expected core concepts.
+2.  **Verify** if the candidate's answer is **correct, complete, and relevant** to the question asked.
+3.  **Return** only one of the following Boolean values as your final output: **True** (if the answer is substantially correct and appropriate) or **False** (if the answer is incorrect, incomplete, or irrelevant).""")
 
 ats_prompt = PromptTemplate.from_template("""
     You are an expert ATS (Applicant Tracking System) and a professional tech recruiter.
