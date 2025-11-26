@@ -15,6 +15,7 @@ dependencies = [
     "langchain-core>=1.0.2",
     "langchain-google-genai>=3.0.0",
     "langchain-text-splitters>=1.0.0",
+    "langgraph>=1.0.2",
     "langsmith>=0.4.39",
     "pandas>=2.3.3",
     "psycopg2>=2.9.11",
