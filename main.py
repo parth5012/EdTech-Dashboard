@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, session, jsonify
+from flask import render_template, request, redirect, url_for, session, jsonify, flash
 import os
 from werkzeug.utils import secure_filename
 from utils.llms import (
@@ -63,6 +63,13 @@ def signup():
     if request.method == "POST":
         username = request.form["username"]
         email = request.form["email"]
+        # retrieving all emails
+        emails = db.session.query(User.email).all()
+        email_list = [email[0] for email in emails]
+        print(email_list)
+        if email in email_list:
+            flash("Email already exists!!")
+            return redirect("/login")
         password = request.form["password"]
 
         # Hash password using Werkzeug
