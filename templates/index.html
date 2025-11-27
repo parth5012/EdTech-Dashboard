@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -8,19 +8,24 @@
     <script src="https://unpkg.com/lucide@latest"></script>
   </head>
 
-  <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  <body
+    class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
+  >
     <!-- Header -->
     <header class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div
+        class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
+      >
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+          <div
+            class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center"
+          >
             <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
           </div>
           <h1 class="text-2xl font-bold text-gray-900">PlacementReady</h1>
         </div>
 
         <nav class="hidden md:flex items-center gap-8">
-           
           <button
             onclick="window.location.href='/login'"
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
@@ -34,19 +39,21 @@
           >
             Signup
           </button>
-
         </nav>
       </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+    <section
+      class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center"
+    >
       <div>
         <h2 class="text-5xl font-bold text-gray-900 mb-6 leading-tight">
           Your Path to <span class="text-blue-600">Placement Success</span>
         </h2>
         <p class="text-xl text-gray-600 mb-8">
-          Track your progress, improve your skills, and get placement-ready with our comprehensive platform designed for students.
+          Track your progress, improve your skills, and get placement-ready with
+          our comprehensive platform designed for students.
         </p>
         <div class="flex gap-4 flex-wrap">
           <button
@@ -55,7 +62,9 @@
           >
             <i data-lucide="upload" class="w-5 h-5"></i> Upload Resume & Start
           </button>
-          <button class="px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition font-medium text-lg border-2 border-blue-600">
+          <button
+            class="px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition font-medium text-lg border-2 border-blue-600"
+          >
             Learn More
           </button>
         </div>
@@ -64,18 +73,32 @@
       <!-- Stats -->
       <div class="grid grid-cols-2 gap-4">
         {% for stat in [
-          {'icon':'trending-up','color':'purple','value':'75%','label':'Avg. Readiness','change':'+5% this week'},
-          {'icon':'file-text','color':'pink','value':'82%','label':'Resume Score','change':'+8% this week'},
-          {'icon':'code','color':'blue','value':'68%','label':'Test Score','change':'+12% this week'},
-          {'icon':'award','color':'green','value':'4/6','label':'Certifications','change':'2 new'}
-        ] %}
-        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition text-center">
-          <div class="w-14 h-14 bg-{{stat.color}}-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
-            <i data-lucide="{{stat.icon}}" class="w-7 h-7 text-{{stat.color}}-600"></i>
+        {'icon':'trending-up','color':'purple','value':'75%','label':'Avg.
+        Readiness','change':'+5% this week'},
+        {'icon':'file-text','color':'pink','value':'82%','label':'Resume
+        Score','change':'+8% this week'},
+        {'icon':'code','color':'blue','value':'68%','label':'Test
+        Score','change':'+12% this week'},
+        {'icon':'award','color':'green','value':'4/6','label':'Certifications','change':'2
+        new'} ] %}
+        <div
+          class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition text-center"
+        >
+          <div
+            class="w-14 h-14 bg-{{stat.color}}-100 rounded-xl flex items-center justify-center mb-4 mx-auto"
+          >
+            <i
+              data-lucide="{{stat.icon}}"
+              class="w-7 h-7 text-{{stat.color}}-600"
+            ></i>
           </div>
-          <div class="text-3xl font-bold text-gray-900 mb-2">{{stat.value}}</div>
+          <div class="text-3xl font-bold text-gray-900 mb-2">
+            {{stat.value}}
+          </div>
           <div class="text-gray-600">{{stat.label}}</div>
-          <div class="text-green-500 text-sm font-medium mt-1">{{stat.change}}</div>
+          <div class="text-green-500 text-sm font-medium mt-1">
+            {{stat.change}}
+          </div>
         </div>
         {% endfor %}
       </div>
@@ -83,13 +106,20 @@
 
     <!-- CTA Section -->
     <section class="max-w-7xl mx-auto px-6 py-12">
-      <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 shadow-2xl text-center">
-        <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mb-6 mx-auto">
+      <div
+        class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 shadow-2xl text-center"
+      >
+        <div
+          class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mb-6 mx-auto"
+        >
           <i data-lucide="upload" class="w-10 h-10 text-blue-600"></i>
         </div>
-        <h2 class="text-4xl font-bold text-white mb-4">Ready to Get Started?</h2>
+        <h2 class="text-4xl font-bold text-white mb-4">
+          Ready to Get Started?
+        </h2>
         <p class="text-xl text-blue-100 mb-8">
-          Upload your resume now and get instant feedback on your placement readiness
+          Upload your resume now and get instant feedback on your placement
+          readiness
         </p>
         <button
           onclick="toggleModal(true)"
@@ -103,38 +133,59 @@
     <!-- Features -->
     <section id="features" class="max-w-7xl mx-auto px-6 py-20">
       <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-gray-900 mb-4">Everything You Need to Succeed</h2>
-        <p class="text-xl text-gray-600">Comprehensive tools to track and improve your placement readiness</p>
+        <h2 class="text-4xl font-bold text-gray-900 mb-4">
+          Everything You Need to Succeed
+        </h2>
+        <p class="text-xl text-gray-600">
+          Comprehensive tools to track and improve your placement readiness
+        </p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition">
-          <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
+        <div
+          class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition"
+        >
+          <div
+            class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mb-6"
+          >
             <i data-lucide="file-text" class="w-8 h-8 text-purple-600"></i>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-3">Resume Analysis</h3>
           <p class="text-gray-600">
-            Get detailed feedback on your resume with AI-powered insights and improvement suggestions.
+            Get detailed feedback on your resume with AI-powered insights and
+            improvement suggestions.
           </p>
         </div>
 
-        <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition">
-          <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+        <div
+          class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition"
+        >
+          <div
+            class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6"
+          >
             <i data-lucide="code" class="w-8 h-8 text-blue-600"></i>
           </div>
-          <h3 class="text-2xl font-bold text-gray-900 mb-3">Test Preparation</h3>
+          <h3 class="text-2xl font-bold text-gray-900 mb-3">
+            Test Preparation
+          </h3>
           <p class="text-gray-600">
-            Practice coding problems, aptitude tests, and technical assessments to boost your scores.
+            Practice coding problems, aptitude tests, and technical assessments
+            to boost your scores.
           </p>
         </div>
 
-        <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition">
-          <div class="w-16 h-16 bg-pink-100 rounded-xl flex items-center justify-center mb-6">
+        <div
+          class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition"
+        >
+          <div
+            class="w-16 h-16 bg-pink-100 rounded-xl flex items-center justify-center mb-6"
+          >
             <i data-lucide="message-square" class="w-8 h-8 text-pink-600"></i>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-3">Mock Interviews</h3>
           <p class="text-gray-600">
-            Practice with realistic interview scenarios and get feedback to improve your performance.
+            Practice with realistic interview scenarios and get feedback to
+            improve your performance.
           </p>
         </div>
       </div>
@@ -145,7 +196,9 @@
       id="signupModal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto"
     >
-      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8 relative my-8">
+      <div
+        class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8 relative my-8"
+      >
         <button
           onclick="toggleModal(false)"
           class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl"
@@ -154,14 +207,19 @@
         </button>
 
         <div class="text-center mb-8">
-          <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mb-4 mx-auto">
+          <div
+            class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mb-4 mx-auto"
+          >
             <i data-lucide="graduation-cap" class="w-8 h-8 text-white"></i>
           </div>
           <h3 class="text-3xl font-bold text-gray-900 mb-2">Get Started</h3>
-          <p class="text-gray-600">Create your account and upload your resume to begin</p>
+          <p class="text-gray-600">
+            Create your account and upload your resume to begin
+          </p>
         </div>
 
         <form
+          id="resumeForm"
           method="post"
           action="{{ url_for('upload_resume') }}"
           enctype="multipart/form-data"
@@ -169,7 +227,9 @@
         >
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Username</label
+              >
               <input
                 type="text"
                 name="username"
@@ -179,7 +239,9 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Email</label
+              >
               <input
                 type="email"
                 name="email"
@@ -191,7 +253,9 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Resume</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Upload Resume</label
+            >
             <input
               type="file"
               name="resume"
@@ -201,14 +265,19 @@
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Job Description (Optional)</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Job Description (Optional)</label
+            >
             <textarea
               name="job_description"
               rows="4"
               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-600 focus:outline-none transition resize-none"
               placeholder="Paste the job description you're targeting to get tailored feedback..."
             ></textarea>
-            <p class="text-sm text-gray-500 mt-1">Adding a job description helps us provide more relevant resume analysis</p>
+            <p class="text-sm text-gray-500 mt-1">
+              Adding a job description helps us provide more relevant resume
+              analysis
+            </p>
           </div>
 
           <button
@@ -220,23 +289,114 @@
         </form>
       </div>
     </div>
+    <!-- Fancy Resume Loader -->
+    <div
+      id="resumeLoader"
+      class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
+    >
+      <div
+        id="loaderCard"
+        class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 relative overflow-hidden"
+      >
+        <!-- Animated background -->
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 animate-pulse"
+        ></div>
+
+        <div class="relative z-10">
+          <!-- Pulsing Icon -->
+          <div class="flex justify-center mb-6">
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-20"
+              ></div>
+              <div
+                class="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full animate-bounce"
+              >
+                <svg
+                  class="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 00-2 2v16l4-4h10a2 2 0 002-2V6a2 2 0 00-2-2h-4z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading title -->
+          <h3 class="text-2xl font-bold text-center text-gray-800 mb-2">
+            Analyzing Your Resume
+          </h3>
+
+          <!-- Dynamic Status -->
+          <p id="statusText" class="text-center text-gray-600 mb-6">
+            Uploading your file...
+          </p>
+
+          <!-- Progress Bar -->
+          <div class="relative mb-6">
+            <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                id="progressBar"
+                class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 rounded-full transition-all duration-300 ease-out relative"
+                style="width: 0%"
+              >
+                <div class="absolute inset-0 bg-white/30 animate-pulse"></div>
+              </div>
+            </div>
+            <div class="absolute -top-8 left-0 right-0 text-center">
+              <span
+                id="progressLabel"
+                class="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold"
+              >
+                0%
+              </span>
+            </div>
+          </div>
+
+          <!-- Loading dots -->
+          <div class="flex justify-center gap-2">
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+            <div
+              class="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+              style="animation-delay: 150ms"
+            ></div>
+            <div
+              class="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+              style="animation-delay: 300ms"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12 mt-20">
       <div class="max-w-7xl mx-auto px-6 text-center">
         <div class="flex items-center justify-center gap-3 mb-4">
-          <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+          <div
+            class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center"
+          >
             <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
           </div>
           <h3 class="text-2xl font-bold">PlacementReady</h3>
         </div>
-        <p class="text-gray-400 mb-6">Empowering students to achieve their placement goals</p>
+        <p class="text-gray-400 mb-6">
+          Empowering students to achieve their placement goals
+        </p>
         <div class="flex justify-center gap-8 text-gray-400">
           <a href="#" class="hover:text-white transition">Privacy Policy</a>
           <a href="#" class="hover:text-white transition">Terms of Service</a>
           <a href="#" class="hover:text-white transition">Contact Us</a>
         </div>
-        <p class="text-gray-500 mt-8">© 2025 PlacementReady. All rights reserved.</p>
+        <p class="text-gray-500 mt-8">
+          © 2025 PlacementReady. All rights reserved.
+        </p>
       </div>
     </footer>
 
@@ -246,6 +406,54 @@
         const modal = document.getElementById("signupModal");
         modal.classList.toggle("hidden", !show);
       }
+      function startResumeLoader() {
+        const loader = document.getElementById("resumeLoader");
+        const progressBar = document.getElementById("progressBar");
+        const progressLabel = document.getElementById("progressLabel");
+        const statusText = document.getElementById("statusText");
+
+        loader.classList.remove("hidden");
+
+        let progress = 0;
+
+        // Smooth natural loading until ~95%
+        const interval = setInterval(() => {
+          if (progress < 95) {
+            progress += Math.floor(Math.random() * 4) + 1; // +1 to +4
+          }
+
+          if (progress > 95) progress = 95;
+
+          progressBar.style.width = progress + "%";
+          progressLabel.textContent = progress + "%";
+
+          // Status messages
+          if (progress < 30) statusText.textContent = "Uploading your file...";
+          else if (progress < 60)
+            statusText.textContent = "Processing document...";
+          else if (progress < 90)
+            statusText.textContent = "Extracting information...";
+          else statusText.textContent = "Almost done...";
+        }, 120);
+
+        // Fake backend complete time (2–4 sec)
+        const backendTime = Math.random() * 2000 + 2000;
+
+        setTimeout(() => {
+          clearInterval(interval);
+
+          // Smooth jump to 100%
+          progress = 100;
+          progressBar.style.width = "100%";
+          progressLabel.textContent = "100%";
+          statusText.textContent = "Complete!";
+        }, backendTime);
+      }
+
+      // Attach loader to your form submission
+      document.getElementById("resumeForm").addEventListener("submit", () => {
+        startResumeLoader();
+      });
     </script>
   </body>
 </html>
