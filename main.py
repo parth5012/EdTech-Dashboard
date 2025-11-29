@@ -341,6 +341,9 @@ def results():
         db.session.commit()
     return render_template("results.html", answers=answers)
 
+@app.route("/results_dashboard")
+def results_dashboard():
+    return render_template('results_dashboard.html')
 
 @app.route("/debug-sentry")
 def trigger_error():
