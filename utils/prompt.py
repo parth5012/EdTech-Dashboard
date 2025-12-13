@@ -1,4 +1,5 @@
 from langchain_core.prompts import PromptTemplate
+from utils.output_models import format_instructions
 
 prompt_extract = PromptTemplate(
     template="""
@@ -71,7 +72,7 @@ Resume Content:
                                                 Do not return any kind of text in the output
         """)
 
-interview_prompt = PromptTemplate.from_template("""
+interview_prompt = PromptTemplate(template="""
     Persona: You are an expert technical interviewer with over a decade of experience hiring for data science and analytics teams. You specialize in evaluating entry-level (fresher) talent.
 
 Context: Your goal is to create a robust interview question bank for the role discussed in description. The questions must be appropriate for a candidate with primarily academic and project-based experience (a fresher).
@@ -79,22 +80,14 @@ Context: Your goal is to create a robust interview question bank for the role di
 Task: Refer to the job description provided below. Generate a comprehensive list of interview questions.
 
 Requirements:
-
-Structure: Present the output as a clearly structured json consisting of interview questions stored in a python list.
-Please structure your response as a single JSON object.
-
-The root object must contain a single key named interview_questions.
-
-The value of interview_questions must be a list of objects.
-
-Each object in that list must have exactly two keys:
-
-"category": A string describing the topic (e.g., "SQL & Database Concepts").
-
-"questions": A list of strings, where each string is a single interview question.
+{format_instructions}
 Job Description:
 
-{job_desc}""")
+{job_desc}
+
+Generate only 5 category question pairs.""",
+input_variables=['job_desc'],
+partial_variables={'format_instructions':format_instructions})
 
 check_prompt = PromptTemplate.from_template("""
 As an expert interviewer , evaluate the provided answer for the given interview question.

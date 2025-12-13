@@ -15,6 +15,7 @@ from langchain_core.runnables import RunnableLambda, RunnableParallel
 import os
 from dotenv import load_dotenv
 from langsmith import traceable
+from utils.output_models import parser
 
 load_dotenv()
 
@@ -57,10 +58,10 @@ def get_readiness_score(resume_content):
 
 @traceable(name="Generate Interview Ques")
 def get_interview_ques(job_desc):
-    chain = interview_prompt | llm | JsonOutputParser()
+    chain = interview_prompt | llm | parser
     res = chain.invoke(job_desc)
     print(res)
-    return res["interview_questions"]
+    return res
 
 @traceable(name="Check Answer")
 def is_answer(ques, answer):

@@ -142,11 +142,10 @@ def dashboard():
     resume = Resume.query.filter_by(user_id=user_id).first()
     content = resume.resume_text
     desc = session["desc"]
-    CONFIG={
-        'metadata': {'thread_id':user_id},
-        'run_name': "Dashboard Calculations"
-    }
-    state = dashboard_workflow.invoke({"resume_text": content, "job_desc": desc},config=CONFIG)
+    CONFIG = {"metadata": {"thread_id": user_id}, "run_name": "Dashboard Calculations"}
+    state = dashboard_workflow.invoke(
+        {"resume_text": content, "job_desc": desc}, config=CONFIG
+    )
     details = state["job_details"]
     if not details["title"]:
         return redirect(url_for("home"))
@@ -219,79 +218,6 @@ def mock_interview():
     if "desc" not in session:
         return redirect(url_for("home"))
     ques = get_interview_ques(session["desc"])
-    # ques = [
-    #     {
-    #         "category": "Introduction & Motivation",
-    #         "questions": [
-    #             "Tell me about yourself and why you're interested in a Junior Data Scientist role at Google, specifically within the gReach program.",
-    #             "What aspects of this role and the gReach program particularly appeal to you?",
-    #             "How do you see your academic background and project experience preparing you for the responsibilities outlined in the job description?",
-    #             "What are your long-term career aspirations in the field of data science and analytics?",
-    #             "Describe a time you had to learn a new technical skill quickly. How did you approach it?",
-    #         ],
-    #     },
-    #     {
-    #         "category": "Data Analysis & Interpretation",
-    #         "questions": [
-    #             "Imagine you're given a dataset of YouTube video ad performance for a client in the telecommunications industry. What key metrics would you analyze to assess their success, and why?",
-    #             "How would you approach identifying user trends from YouTube video analytics for a specific industry (e.g., finance)? What kinds of insights would you look for?",
-    #             "Describe a project where you had to interpret complex data and translate it into actionable insights. What was the challenge, and what was your approach?",
-    #             "If a client wants to understand why their YouTube ad campaign is underperforming, what steps would you take to diagnose the issue?",
-    #             "How would you go about summarizing video analytics and trends for a specific industry to a non-technical audience?",
-    #         ],
-    #     },
-    #     {
-    #         "category": "Machine Learning & AI Concepts (Entry-Level)",
-    #         "questions": [
-    #             "What is the difference between supervised and unsupervised learning? Provide an example of each.",
-    #             "Can you explain the concept of overfitting and underfitting in machine learning models? How might you mitigate these issues?",
-    #             "What are some common evaluation metrics for classification models (e.g., accuracy, precision, recall)? When would you prioritize one over the other?",
-    #             "Have you had any exposure to generative AI concepts? If so, can you briefly explain what it is and its potential applications?",
-    #             "Describe a simple machine learning algorithm you are familiar with (e.g., Linear Regression, K-Means). How does it work at a high level?",
-    #         ],
-    #     },
-    #     {
-    #         "category": "Programming & Tools (Python/R, SQL)",
-    #         "questions": [
-    #             "Describe a project where you used Python (or R) for data analysis. What libraries did you primarily use, and for what purpose?",
-    #             "Write a SQL query to find the top 5 customers who spent the most on our platform in the last quarter.",
-    #             "Explain the difference between a JOIN and a UNION in SQL.",
-    #             "How would you handle missing values in a dataset using Python (e.g., with Pandas)?",
-    #             "Imagine you have two Pandas DataFrames. How would you merge them based on a common column?",
-    #         ],
-    #     },
-    #     {
-    #         "category": "Problem Solving & Critical Thinking",
-    #         "questions": [
-    #             "You're tasked with creating a proposal for a new YouTube ad campaign. What information would you gather, and how would you structure your proposal?",
-    #             "How would you approach streamlining a repetitive task within a sales support process to improve productivity?",
-    #             "Describe a situation where you had to collaborate with others to achieve a common goal. What was your role, and how did you contribute?",
-    #             "If a client is hesitant about a particular advertising solution, how would you approach addressing their concerns?",
-    #             "How do you prioritize tasks when faced with multiple urgent requests?",
-    #         ],
-    #     },
-    #     {
-    #         "category": "Business Acumen & Sales Support",
-    #         "questions": [
-    #             "How do you think data analysis can directly contribute to improving sales productivity?",
-    #             "What does it mean to act 'like an owner' in a professional setting?",
-    #             "How would you tailor a presentation to a specific client's marketing objectives?",
-    #             "What are your thoughts on the role of AI in the future of advertising?",
-    #             "How would you go about demonstrating the success of a video advertising campaign to a client?",
-    #         ],
-    #     },
-    #     {
-    #         "category": "Behavioral & Teamwork",
-    #         "questions": [
-    #             "Tell me about a time you received constructive criticism. How did you respond?",
-    #             "Describe a challenging project you worked on and how you overcame the obstacles.",
-    #             "How do you handle working under pressure or with tight deadlines?",
-    #             "What are your strengths and weaknesses when working in a team environment?",
-    #             "How do you ensure you are contributing effectively to team discussions and ideation sessions?",
-    #         ],
-    #     },
-    # ]
-    # ques = ques[:5]
     user_id = session["user_id"]
     jobapplication = JobApplication.query.filter_by(user_id=user_id).first()
     interview = MockInterview(application_id=jobapplication.application_id)
@@ -301,9 +227,9 @@ def mock_interview():
     return render_template(
         "mock.html",
         current_ques=0,
-        n_ques=len(ques),
-        question=ques[0]["questions"][0],
-        ques_list=ques,
+        n_ques=len(ques.questions),
+        question=ques.questions[0],
+        ques_obj=ques,
     )
 
 
@@ -345,9 +271,11 @@ def results():
         db.session.commit()
     return render_template("results.html", answers=answers)
 
+
 @app.route("/results_dashboard")
 def results_dashboard():
-    return render_template('results_dashboard.html')
+    return render_template("results_dashboard.html")
+
 
 @app.route("/debug-sentry")
 def trigger_error():
@@ -364,9 +292,11 @@ def test_llm_call():
     feedback = call_gemini_api()
     return feedback
 
-@app.route('/result-dashboard')
+
+@app.route("/result-dashboard")
 def result_dashboard():
-    return render_template('result_dashboard.html')
+    return render_template("result_dashboard.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

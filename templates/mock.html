@@ -577,7 +577,7 @@
                     <strong>Success!</strong> ${result.message}
                     
                     `;
-            ques_list = {{ques_list | tojson}};
+            ques_list = {{ques_obj.questions}};
             current_q_num = parseInt(ques_no.innerHTML);
             next_q_num = current_q_num + 1;
             if (next_q_num <= ques_list.length) {
@@ -587,7 +587,7 @@
               ques_no.innerHTML = next_q_num;
 
               // 5. Update the question text (access index 7, which is safe)
-              ques.innerHTML = ques_list[next_q_num - 1]["questions"][0];
+              ques.innerHTML = ques_list[next_q_num - 1];
 
               // 6. Re-enable the submit button
               submitBtn.disabled = false;
