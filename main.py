@@ -142,7 +142,11 @@ def dashboard():
     resume = Resume.query.filter_by(user_id=user_id).first()
     content = resume.resume_text
     desc = session["desc"]
-    state = dashboard_workflow.invoke({"resume_text": content, "job_desc": desc})
+    CONFIG={
+        'metadata': {'thread_id':user_id},
+        'run_name': "Dashboard Calculations"
+    }
+    state = dashboard_workflow.invoke({"resume_text": content, "job_desc": desc},config=CONFIG)
     details = state["job_details"]
     if not details["title"]:
         return redirect(url_for("home"))

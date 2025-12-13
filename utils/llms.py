@@ -14,7 +14,7 @@ from utils.prompt import (
 from langchain_core.runnables import RunnableLambda, RunnableParallel
 import os
 from dotenv import load_dotenv
-
+from langsmith import traceable
 
 load_dotenv()
 
@@ -22,7 +22,7 @@ llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash-lite", api_key=os.getenv("GEMINI_API_KEY")
 )
 
-
+@traceable(name="Resume Reader")
 def get_resume_content(resume):
     content = []
     if resume.endswith(".pdf"):
@@ -37,7 +37,7 @@ def get_resume_content(resume):
         resume_content += page.page_content
     return resume_content
 
-
+@traceable(name="Extracting Details From Resume")
 def get_json_output(resume_content):
     chain = prompt_extract | llm | JsonOutputParser()
     res = chain.invoke({"resume_data": resume_content})
@@ -45,30 +45,30 @@ def get_json_output(resume_content):
 
     return res
 
-
+@traceable(name="Improvement One Liners")
 def get_str_output(resume_content):
     chain = analyser_prompt | llm | StrOutputParser()
     return chain.invoke(resume_content)
 
-
+@traceable(name="Readiness Score")
 def get_readiness_score(resume_content):
     chain = readiness_prompt | llm | StrOutputParser()
     return chain.invoke(resume_content)
 
-
+@traceable(name="Generate Interview Ques")
 def get_interview_ques(job_desc):
     chain = interview_prompt | llm | JsonOutputParser()
     res = chain.invoke(job_desc)
     print(res)
     return res["interview_questions"]
 
-
+@traceable(name="Check Answer")
 def is_answer(ques, answer):
     chain = check_prompt | llm | StrOutputParser()
     res = chain.invoke({"ques": ques, "ans": answer})
     return res
 
-
+@traceable(name="ATS score")
 def get_ats_score(resume_content, job_desc):
     process_inputs = RunnableParallel(
         jd_text=RunnableLambda(lambda x: x["jd_text"]),
@@ -77,7 +77,7 @@ def get_ats_score(resume_content, job_desc):
     chain = process_inputs | ats_prompt | llm | StrOutputParser() | JsonOutputParser()
     return chain.invoke({"jd_text": job_desc, "resume_text": resume_content})
 
-
+@traceable(name="Cover Letter")
 def generate_cover_letter(resume_content, job_desc):
     process_inputs = RunnableParallel(
         job_desc=RunnableLambda(lambda x: x["job_desc"]),
@@ -92,7 +92,7 @@ def generate_cover_letter(resume_content, job_desc):
     )
     return chain.invoke({"job_desc": job_desc, "resume": resume_content})
 
-
+@traceable(name="Fetch Job Details")
 def get_job_details(job_desc):
     chain = job_details_prompt | llm | JsonOutputParser()
     return chain.invoke(job_desc)
