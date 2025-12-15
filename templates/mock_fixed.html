@@ -464,6 +464,7 @@
       let audioBlob;
       let startTime;
       let timerInterval;
+      let mediaStream; // Store the stream globally to clean up properly
 
       const recordBtn = document.getElementById("recordBtn");
       const stopBtn = document.getElementById("stopBtn");
@@ -476,6 +477,25 @@
       const resultSection = document.getElementById("resultSection");
       const ques = document.getElementsByClassName("question-text")[0];
       const ques_no = document.getElementById("current_ques");
+
+      // Get supported MIME type for audio recording
+      function getSupportedMimeType() {
+        const types = [
+          "audio/webm;codecs=opus",
+          "audio/webm",
+          "audio/ogg;codecs=opus",
+          "audio/mp4",
+          "audio/mpeg"
+        ];
+        for (const type of types) {
+          if (MediaRecorder.isTypeSupported(type)) {
+            console.log("Using MIME type:", type);
+            return type;
+          }
+        }
+        console.log("Using default MIME type");
+        return ""; // Let browser choose default
+      }
 
       // Format time as MM:SS
       function formatTime(seconds) {
@@ -492,28 +512,92 @@
         timer.textContent = formatTime(elapsed);
       }
 
+      // Reset timer display
+      function resetTimer() {
+        timer.textContent = "00:00";
+      }
+
+      // Clean up media stream
+      function cleanupStream() {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach((track) => track.stop());
+          mediaStream = null;
+        }
+      }
+
       // Start recording
       recordBtn.addEventListener("click", async () => {
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
+          // Request microphone access
+          mediaStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              sampleRate: 44100
+            }
           });
 
-          mediaRecorder = new MediaRecorder(stream);
+          // Get supported MIME type
+          const mimeType = getSupportedMimeType();
+          
+          // Create MediaRecorder with options
+          const options = mimeType ? { mimeType } : {};
+          mediaRecorder = new MediaRecorder(mediaStream, options);
+          
+          // Reset audio chunks
           audioChunks = [];
 
+          // Handle data available event
           mediaRecorder.addEventListener("dataavailable", (event) => {
-            audioChunks.push(event.data);
+            if (event.data.size > 0) {
+              audioChunks.push(event.data);
+              console.log("Audio chunk received:", event.data.size, "bytes");
+            }
           });
 
+          // Handle recording stop
           mediaRecorder.addEventListener("stop", () => {
-            audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+            console.log("Recording stopped. Total chunks:", audioChunks.length);
+            
+            if (audioChunks.length === 0) {
+              console.error("No audio data recorded!");
+              status.textContent = "Error: No audio data captured";
+              resultSection.className = "result-section error show";
+              resultSection.innerHTML =
+                '<i class="fas fa-exclamation-circle"></i> No audio data was recorded. Please try again.';
+              return;
+            }
+
+            // Create blob from chunks
+            const mimeType = mediaRecorder.mimeType || "audio/webm";
+            audioBlob = new Blob(audioChunks, { type: mimeType });
+            console.log("Audio blob created:", audioBlob.size, "bytes, type:", mimeType);
+            
+            // Create URL and set to player
             const audioUrl = URL.createObjectURL(audioBlob);
             audioPlayer.src = audioUrl;
             audioPreview.classList.add("show");
+            
+            // Clean up the stream
+            cleanupStream();
           });
 
-          mediaRecorder.start();
+          // Handle errors
+          mediaRecorder.addEventListener("error", (event) => {
+            console.error("MediaRecorder error:", event.error);
+            status.textContent = "Error: Recording failed";
+            resultSection.className = "result-section error show";
+            resultSection.innerHTML =
+              '<i class="fas fa-exclamation-circle"></i> Recording error occurred. Please try again.';
+            cleanupStream();
+          });
+
+          // Start recording with timeslice to ensure data is captured
+          mediaRecorder.start(1000); // Request data every second
+          console.log("Recording started, state:", mediaRecorder.state);
+          
+          // Reset and start timer
+          resetTimer();
           startTime = Date.now();
           timerInterval = setInterval(updateTimer, 1000);
 
@@ -530,31 +614,63 @@
           status.textContent = "Error: Could not access microphone";
           resultSection.className = "result-section error show";
           resultSection.innerHTML =
-            '<i class="fas fa-exclamation-circle"></i> Could not access microphone. Please check permissions.';
+            '<i class="fas fa-exclamation-circle"></i> Could not access microphone. Please check permissions and ensure you\'re using HTTPS.';
+          cleanupStream();
         }
       });
 
       // Stop recording
       stopBtn.addEventListener("click", () => {
-        mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach((track) => track.stop());
-        clearInterval(timerInterval);
+        if (!mediaRecorder) {
+          console.error("No mediaRecorder instance");
+          return;
+        }
 
-        // Update UI
-        visualizer.classList.remove("recording");
-        status.textContent =
-          "Recording complete! Review and submit your answer";
-        recordBtn.disabled = false;
-        stopBtn.disabled = true;
-        submitBtn.disabled = false;
+        // Check if recording is in progress
+        if (mediaRecorder.state === "recording") {
+          console.log("Stopping recording...");
+          mediaRecorder.stop();
+          clearInterval(timerInterval);
+
+          // Update UI
+          visualizer.classList.remove("recording");
+          status.textContent =
+            "Recording complete! Review and submit your answer";
+          recordBtn.disabled = false;
+          stopBtn.disabled = true;
+          submitBtn.disabled = false;
+        } else {
+          console.warn("MediaRecorder not in recording state:", mediaRecorder.state);
+        }
       });
 
       // Submit to backend
       submitBtn.addEventListener("click", async () => {
+        if (!audioBlob) {
+          console.error("No audio blob available");
+          resultSection.className = "result-section error show";
+          resultSection.innerHTML =
+            '<i class="fas fa-exclamation-circle"></i> No recording available. Please record your answer first.';
+          return;
+        }
+
         const formData = new FormData();
-        formData.append("audio", audioBlob, "interview_answer.webm");
+        
+        // Determine file extension based on MIME type
+        let filename = "interview_answer.webm";
+        if (audioBlob.type.includes("ogg")) {
+          filename = "interview_answer.ogg";
+        } else if (audioBlob.type.includes("mp4")) {
+          filename = "interview_answer.mp4";
+        } else if (audioBlob.type.includes("mpeg")) {
+          filename = "interview_answer.mp3";
+        }
+        
+        formData.append("audio", audioBlob, filename);
         formData.append("question", ques.innerHTML);
-        formData.append("user_id", '{{ user_id or "demo_user" }}'); // Add user ID from session
+        formData.append("user_id", '{{ user_id or "demo_user" }}');
+
+        console.log("Submitting:", filename, audioBlob.size, "bytes");
 
         // Show loading state
         resultSection.className = "result-section loading show";
@@ -573,63 +689,58 @@
           if (response.ok) {
             resultSection.className = "result-section success show";
             resultSection.innerHTML = `
-                    <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-check-circle"></i> 
                     <strong>Success!</strong> ${result.message}
-
+                    
                     `;
-            ques_list = {{ques_obj.questions | tojson }};
+            ques_list = {{ques_obj.questions}};
             current_q_num = parseInt(ques_no.innerHTML);
             next_q_num = current_q_num + 1;
             if (next_q_num <= ques_list.length) {
               // Still more questions...
 
-              // 4. Update the question number display (to 8)
+              // Update the question number display
               ques_no.innerHTML = next_q_num;
 
-              // 5. Update the question text (access index 7, which is safe)
+              // Update the question text
               ques.innerHTML = ques_list[next_q_num - 1];
 
-              // 6. Re-enable the submit button
+              // Re-enable the submit button
               submitBtn.disabled = false;
             } else {
-              // --- INTERVIEW IS COMPLETE ---
+              // Interview is complete
 
               resultSection.innerHTML = `
-            <i class="fas fa-check-circle"></i>
+            <i class="fas fa-check-circle"></i> 
             <strong>Interview Complete!</strong>
             <br><small>You have finished all questions.
                 Redirecting to results...</small>
-
+            
         `;
               ques.innerHTML = "You have completed all questions!";
 
               // Keep submit button disabled
               submitBtn.disabled = true;
               // Redirect to results page after 2 seconds
-
+            
               setTimeout(() => {
                   window.location.href = '/results';
               }, 50);
             }
-            // ques_no.innerHTML = next_q_num
-            // console.log(ques_list)
-            // ques.innerHTML = ques_list[current_q_num]['questions'][0] //current_q_num is the index of next ques
 
-          }
-          else {
+          } else {
             resultSection.className = "result-section error show";
             resultSection.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error: ${result.error}`;
             submitBtn.disabled = false;
           }
-        } 
-        catch (err) {
+        } catch (err) {
           console.error("Submit error:", err);
           resultSection.className = "result-section error show";
           resultSection.innerHTML =
             '<i class="fas fa-exclamation-circle"></i> Failed to submit. Please check your connection.';
           submitBtn.disabled = false;
         }
-        });
+      });
     </script>
   </body>
 </html>

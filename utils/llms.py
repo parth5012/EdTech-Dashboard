@@ -1,4 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from utils.prompt import (
@@ -19,9 +20,18 @@ from utils.output_models import parser
 
 load_dotenv()
 
-llm = ChatGoogleGenerativeAI(
+llm1 = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash-lite", api_key=os.getenv("GEMINI_API_KEY")
 )
+llm2 = ChatGroq(
+    model="qwen/qwen3-32b",
+    temperature=0,
+    max_tokens=None,
+    reasoning_format="parsed",
+    timeout=None,
+    max_retries=2,
+)
+
 
 @traceable(name="Resume Reader")
 def get_resume_content(resume):
@@ -38,36 +48,42 @@ def get_resume_content(resume):
         resume_content += page.page_content
     return resume_content
 
+
 @traceable(name="Extracting Details From Resume")
 def get_json_output(resume_content):
-    chain = prompt_extract | llm | JsonOutputParser()
+    chain = prompt_extract | llm1 | JsonOutputParser()
     res = chain.invoke({"resume_data": resume_content})
     print(res)
 
     return res
 
+
 @traceable(name="Improvement One Liners")
 def get_str_output(resume_content):
-    chain = analyser_prompt | llm | StrOutputParser()
+    chain = analyser_prompt | llm1 | StrOutputParser()
     return chain.invoke(resume_content)
+
 
 @traceable(name="Readiness Score")
 def get_readiness_score(resume_content):
-    chain = readiness_prompt | llm | StrOutputParser()
+    chain = readiness_prompt | llm1 | StrOutputParser()
     return chain.invoke(resume_content)
+
 
 @traceable(name="Generate Interview Ques")
 def get_interview_ques(job_desc):
-    chain = interview_prompt | llm | parser
+    chain = interview_prompt | llm2 | parser
     res = chain.invoke(job_desc)
     print(res)
     return res
 
+
 @traceable(name="Check Answer")
 def is_answer(ques, answer):
-    chain = check_prompt | llm | StrOutputParser()
+    chain = check_prompt | llm1 | StrOutputParser()
     res = chain.invoke({"ques": ques, "ans": answer})
-    return res
+    return bool(res)
+
 
 @traceable(name="ATS score")
 def get_ats_score(resume_content, job_desc):
@@ -75,8 +91,9 @@ def get_ats_score(resume_content, job_desc):
         jd_text=RunnableLambda(lambda x: x["jd_text"]),
         resume_text=RunnableLambda(lambda x: x["resume_text"]),
     )
-    chain = process_inputs | ats_prompt | llm | StrOutputParser() | JsonOutputParser()
+    chain = process_inputs | ats_prompt | llm1 | StrOutputParser() | JsonOutputParser()
     return chain.invoke({"jd_text": job_desc, "resume_text": resume_content})
+
 
 @traceable(name="Cover Letter")
 def generate_cover_letter(resume_content, job_desc):
@@ -87,13 +104,14 @@ def generate_cover_letter(resume_content, job_desc):
     chain = (
         process_inputs
         | cover_letter_prompt
-        | llm
+        | llm1
         | StrOutputParser()
         | JsonOutputParser()
     )
     return chain.invoke({"job_desc": job_desc, "resume": resume_content})
 
+
 @traceable(name="Fetch Job Details")
 def get_job_details(job_desc):
-    chain = job_details_prompt | llm | JsonOutputParser()
+    chain = job_details_prompt | llm1 | JsonOutputParser()
     return chain.invoke(job_desc)
