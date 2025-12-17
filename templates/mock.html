@@ -536,9 +536,10 @@
 
       // Stop recording
       stopBtn.addEventListener("click", () => {
+        
+        clearInterval(timerInterval);
         mediaRecorder.stop();
         mediaRecorder.stream.getTracks().forEach((track) => track.stop());
-        clearInterval(timerInterval);
 
         // Update UI
         visualizer.classList.remove("recording");

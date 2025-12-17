@@ -164,7 +164,7 @@ def dashboard():
     # Latency Improvement
     ats = state["ats"]["match_score"]
     # ats = 25
-    n_crtf = len(json_content["certifications"])
+    n_crtf = len(json_content.certifications)
     job_application = JobApplication(
         user_id=user_id,
         resume_id=resume.resume_id,
@@ -174,7 +174,7 @@ def dashboard():
         certifications_count=n_crtf,
     )
     if json_content:
-        if json_content["platform_link"]:
+        if json_content.platform_links:
             performance = get_performance_score(json_content=json_content)
         job_application.query.update(values={"certifications_count": n_crtf})
     else:
@@ -196,8 +196,8 @@ def dashboard():
 def certificates():
     content = session["content"]
     del session["content"]
-    if content["certificate_links"]:
-        list = content["certificate_links"]
+    if content.certificate_links:
+        list = content.certificate_links
         count = 0
         for i in range(len(list)):
             if verify_public_badge(list[i]):

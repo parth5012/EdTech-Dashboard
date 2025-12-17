@@ -1,5 +1,5 @@
 from langchain_core.prompts import PromptTemplate
-from utils.output_models import format_instructions
+from utils.output_models import format_instructions1,format_instructions2
 
 prompt_extract = PromptTemplate(
     template="""
@@ -7,19 +7,13 @@ prompt_extract = PromptTemplate(
         {resume_data}
         ### INSTRUCTION:
         The scraped text is from the Resume of a candidate looking for jobs.
-        Your job is to extract the content of this resume and return them in JSON format containing the 
-        following keys: `certifications`,`certificate links`, `issuing authority`, `date earned` and `platform link` .In platform link key add the links that are present in resume contentwhich are similar to used to practice coding like code360,leetcode,hackersrank,github ,etc. and for certificate links use platforms like credly,certifier,unstop ,etc.
-        Only return the valid JSON. Store records of a key in form of list always.if a key has multiple values store those values in the form of a list .
-        Refer to the Example :
-       " {{'certifications': [certificate1,certificate2,certificate3],
-        'issuing_authority': [Company1,Company2,Company3],
-        'date_earned': [date1, date2,date3],
- 'platform_link': [link1,link2,link]}}"
- follow format given for dates  
- date_format = "%Y-%m-%d" 
-        ### VALID JSON (NO PREAMBLE):    
+        Your job is to extract the content of this resume and extract the 
+        following keys: `certifications`,`certificate_links`, `issuing_authority`, `date_earned` and `platform_link` .In platform link key add the links that are present in resume contentwhich are similar to used to practice coding like code360,leetcode,hackersrank,github ,etc. and for certificate links use platforms like credly,certifier,unstop ,etc.  
+        # FORMATTING INSTRUCTIONS:
+         {format_instructions}     
         """,
     input_variables=["resume_data"],
+    partial_variables={"format_instructions": format_instructions2},
 )
 
 analyser_prompt = PromptTemplate.from_template("""You are a senior technical recruiter, skilled at 10-second resume reviews.
@@ -72,7 +66,8 @@ Resume Content:
                                                 Do not return any kind of text in the output
         """)
 
-interview_prompt = PromptTemplate(template="""
+interview_prompt = PromptTemplate(
+    template="""
     Persona: You are an expert technical interviewer with over a decade of experience hiring for data science and analytics teams. You specialize in evaluating entry-level (fresher) talent.
 
 Context: Your goal is to create a robust interview question bank for the role discussed in description. The questions must be appropriate for a candidate with primarily academic and project-based experience (a fresher).
@@ -86,8 +81,9 @@ Job Description:
 {job_desc}
 
 Generate only 5 category question pairs.""",
-input_variables=['job_desc'],
-partial_variables={'format_instructions':format_instructions})
+    input_variables=["job_desc"],
+    partial_variables={"format_instructions": format_instructions1},
+)
 
 check_prompt = PromptTemplate.from_template("""
 As an expert interviewer , evaluate the provided answer for the given interview question.

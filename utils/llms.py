@@ -16,7 +16,7 @@ from langchain_core.runnables import RunnableLambda, RunnableParallel
 import os
 from dotenv import load_dotenv
 from langsmith import traceable
-from utils.output_models import parser
+from utils.output_models import parser1, parser2
 
 load_dotenv()
 
@@ -50,8 +50,8 @@ def get_resume_content(resume):
 
 
 @traceable(name="Extracting Details From Resume")
-def get_json_output(resume_content):
-    chain = prompt_extract | llm1 | JsonOutputParser()
+def get_achievements(resume_content):
+    chain = prompt_extract | llm1 | parser2
     res = chain.invoke({"resume_data": resume_content})
     print(res)
 
@@ -72,7 +72,7 @@ def get_readiness_score(resume_content):
 
 @traceable(name="Generate Interview Ques")
 def get_interview_ques(job_desc):
-    chain = interview_prompt | llm2 | parser
+    chain = interview_prompt | llm2 | parser1
     res = chain.invoke(job_desc)
     print(res)
     return res

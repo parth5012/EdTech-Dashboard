@@ -293,7 +293,7 @@ def parse_input(user_input):
 #     except Exception as e:
 #         st.error(f"Error plotting test scores: {e}")
 def get_performance_score(json_content):
-    platform, username = parse_input(json_content['platform_link'][0])
+    platform, username = parse_input(json_content.platform_links[0])
     performance = 0
     if platform == 'leetcode':
         data = fetch_leetcode_data(username)
