@@ -1,8 +1,10 @@
 import assemblyai as aai
 from utils.models import JobApplication
 from utils.app import db
+from uuid import UUID
+from typing import List
 
-def get_transcription(audio):
+def get_transcription(audio: __file__) -> str:
     config = aai.TranscriptionConfig(speech_model=aai.SpeechModel.universal)
 
     transcript = aai.Transcriber(config=config).transcribe(audio)
@@ -12,7 +14,7 @@ def get_transcription(audio):
 
     return transcript.text
 
-def find_missing_words_count(user_id):
+def find_missing_words_count(user_id: UUID) -> int:
     apps = db.session.query(JobApplication).filter_by(user_id=user_id).all()
     missing_counts = {}
     
@@ -26,7 +28,7 @@ def find_missing_words_count(user_id):
     top_missing = sorted(missing_counts.items(), key=lambda x: x[1], reverse=True)[:5]
     return top_missing
 
-def find_filler_word_count(answers):
+def find_filler_word_count(answers: List[str]):
     filler_words = ['um', 'uh', 'like', 'actually', 'basically']
     total_fillers = 0
     fillers_per_question = [] # For the Bar Chart

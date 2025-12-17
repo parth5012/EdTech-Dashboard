@@ -70,24 +70,24 @@ def readiness_score(state: DashboardState):
     score = get_readiness_score(content)
     return {"readiness_score": score}
 
+def get_dashboard_workflow():
+    graph = StateGraph(DashboardState)
 
-graph = StateGraph(DashboardState)
+    graph.add_node("ats", ats)
+    graph.add_node("quote", quote)
+    graph.add_node("readiness_score", readiness_score)
+    graph.add_node("job_details", job_details)
+    graph.add_node("candidate_details", candidate_details)
 
-graph.add_node("ats", ats)
-graph.add_node("quote", quote)
-graph.add_node("readiness_score", readiness_score)
-graph.add_node("job_details", job_details)
-graph.add_node("candidate_details", candidate_details)
+    graph.add_edge(START, "ats")
+    graph.add_edge(START, "quote")
+    graph.add_edge(START, "readiness_score")
+    graph.add_edge(START, "job_details")
+    graph.add_edge(START, "candidate_details")
+    graph.add_edge("ats", END)
+    graph.add_edge("quote", END)
+    graph.add_edge("readiness_score", END)
+    graph.add_edge("job_details", END)
+    graph.add_edge("candidate_details", END)
 
-graph.add_edge(START, "ats")
-graph.add_edge(START, "quote")
-graph.add_edge(START, "readiness_score")
-graph.add_edge(START, "job_details")
-graph.add_edge(START, "candidate_details")
-graph.add_edge("ats", END)
-graph.add_edge("quote", END)
-graph.add_edge("readiness_score", END)
-graph.add_edge("job_details", END)
-graph.add_edge("candidate_details", END)
-
-dashboard_workflow = graph.compile()
+    return graph.compile()

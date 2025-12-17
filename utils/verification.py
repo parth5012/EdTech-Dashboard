@@ -8,7 +8,7 @@ url = "https://api.credly.com/v1/badges/bc86b51a-6aff-4815-a864-2d40b63d3966"
 # except requests.exceptions.RequestException as e:
 #     print({"error": str(e)})
 
-def verify_public_badge(badge_url):
+def verify_public_badge(badge_url: str) -> bool:
     response = requests.get(badge_url)
     if response.status_code == 200 :
         return True, "Badge found and valid."
@@ -21,7 +21,7 @@ def verify_public_badge(badge_url):
 
 
 
-def verify_unstop_certificate(cert_url):
+def verify_unstop_certificate(cert_url:str) -> bool:
     try:
         response = requests.get(cert_url)
         if response.status_code == 200:
@@ -36,7 +36,7 @@ def verify_unstop_certificate(cert_url):
 # valid, message = verify_unstop_certificate(certificate_url)
 # print(message)
 
-def verify_certifier_certificate(cert_url):
+def verify_certifier_certificate(cert_url: str)-> bool:
     try:
         response = requests.get(cert_url)
         if response.status_code == 200:

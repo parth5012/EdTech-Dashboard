@@ -26,7 +26,7 @@ from utils.models import (
     JobDescription,
     Resume,
 )
-from utils.graphs import dashboard_workflow
+from utils.graphs import get_dashboard_workflow
 
 
 load_dotenv()
@@ -43,13 +43,13 @@ sentry_sdk.init(
 resume_path = 0
 user_answers = {}
 
-uri = os.getenv("URI")
-app.config["SQLALCHEMY_DATABASE_URI"] = uri
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_pre_ping": True,  # Verify connections before using them
-    "pool_recycle": 300,  # Recycle connections after 5 minutes
-    "connect_args": {"sslmode": "require", "connect_timeout": 10},
-}
+# uri = os.getenv("URI")
+# app.config["SQLALCHEMY_DATABASE_URI"] = uri
+# app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+#     "pool_pre_ping": True,  # Verify connections before using them
+#     "pool_recycle": 300,  # Recycle connections after 5 minutes
+#     "connect_args": {"sslmode": "require", "connect_timeout": 10},
+# }
 # db.init_app(app)
 
 
@@ -143,6 +143,7 @@ def dashboard():
     content = resume.resume_text
     desc = session["desc"]
     CONFIG = {"metadata": {"thread_id": user_id}, "run_name": "Dashboard Calculations"}
+    dashboard_workflow = get_dashboard_workflow()
     state = dashboard_workflow.invoke(
         {"resume_text": content, "job_desc": desc}, config=CONFIG
     )
@@ -299,4 +300,4 @@ def result_dashboard():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

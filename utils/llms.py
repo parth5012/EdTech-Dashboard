@@ -16,7 +16,9 @@ from langchain_core.runnables import RunnableLambda, RunnableParallel
 import os
 from dotenv import load_dotenv
 from langsmith import traceable
-from utils.output_models import parser1, parser2
+from utils.output_models import parser1, parser2,InterviewQues,ResumeAchievements
+from typing import List
+from utils.graphs import ATS,JobDetails
 
 load_dotenv()
 
@@ -34,7 +36,7 @@ llm2 = ChatGroq(
 
 
 @traceable(name="Resume Reader")
-def get_resume_content(resume):
+def get_resume_content(resume : __file__) -> str:
     content = []
     if resume.endswith(".pdf"):
         loader = PyPDFLoader(resume)
@@ -50,7 +52,7 @@ def get_resume_content(resume):
 
 
 @traceable(name="Extracting Details From Resume")
-def get_achievements(resume_content):
+def get_achievements(resume_content: str) -> ResumeAchievements:
     chain = prompt_extract | llm1 | parser2
     res = chain.invoke({"resume_data": resume_content})
     print(res)
@@ -59,19 +61,19 @@ def get_achievements(resume_content):
 
 
 @traceable(name="Improvement One Liners")
-def get_str_output(resume_content):
+def get_str_output(resume_content: str) -> List[str]:
     chain = analyser_prompt | llm1 | StrOutputParser()
     return chain.invoke(resume_content)
 
 
 @traceable(name="Readiness Score")
-def get_readiness_score(resume_content):
+def get_readiness_score(resume_content: str) -> str:
     chain = readiness_prompt | llm1 | StrOutputParser()
     return chain.invoke(resume_content)
 
 
 @traceable(name="Generate Interview Ques")
-def get_interview_ques(job_desc):
+def get_interview_ques(job_desc:str ) -> InterviewQues:
     chain = interview_prompt | llm2 | parser1
     res = chain.invoke(job_desc)
     print(res)
@@ -79,14 +81,14 @@ def get_interview_ques(job_desc):
 
 
 @traceable(name="Check Answer")
-def is_answer(ques, answer):
+def is_answer(ques:str, answer:str) -> bool:
     chain = check_prompt | llm1 | StrOutputParser()
     res = chain.invoke({"ques": ques, "ans": answer})
     return bool(res)
 
 
 @traceable(name="ATS score")
-def get_ats_score(resume_content, job_desc):
+def get_ats_score(resume_content: str, job_desc: str) -> ATS:
     process_inputs = RunnableParallel(
         jd_text=RunnableLambda(lambda x: x["jd_text"]),
         resume_text=RunnableLambda(lambda x: x["resume_text"]),
@@ -96,7 +98,7 @@ def get_ats_score(resume_content, job_desc):
 
 
 @traceable(name="Cover Letter")
-def generate_cover_letter(resume_content, job_desc):
+def generate_cover_letter(resume_content :str, job_desc: str) -> str:
     process_inputs = RunnableParallel(
         job_desc=RunnableLambda(lambda x: x["job_desc"]),
         resume=RunnableLambda(lambda x: x["resume"]),
@@ -112,6 +114,6 @@ def generate_cover_letter(resume_content, job_desc):
 
 
 @traceable(name="Fetch Job Details")
-def get_job_details(job_desc):
+def get_job_details(job_desc: str) -> JobDetails:
     chain = job_details_prompt | llm1 | JsonOutputParser()
     return chain.invoke(job_desc)

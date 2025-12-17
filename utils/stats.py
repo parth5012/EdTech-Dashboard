@@ -1,15 +1,16 @@
 
 import requests
-import pandas as pd
+# import pandas as pd
 # import plotly.express as px
 import re
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
+from utils.output_models import ResumeAchievements
 
 # -----------------------------
 # 🔹 Platform Data Fetching Functions
 # -----------------------------
 
-def fetch_leetcode_data(username):
+def fetch_leetcode_data(username: str) -> dict:
     try:
         url = f"https://leetcode-stats-api.herokuapp.com/{username}"
         res = requests.get(url, timeout=10)
@@ -22,7 +23,7 @@ def fetch_leetcode_data(username):
         print(f"LeetCode fetch error: {e}")
         return None
 
-def fetch_codeforces_data(username):
+def fetch_codeforces_data(username: str)-> dict:
     try:
         url = f'https://codeforces.com/api/user.info?handles={username}'
         res = requests.get(url, timeout=10)
@@ -54,7 +55,7 @@ def fetch_codeforces_data(username):
 #         st.error(f"CodeChef fetch error: {e}")
 #         return None
 
-def fetch_github_data(username):
+def fetch_github_data(username: str) -> dict:
     url = f"https://api.github.com/users/{username}"
     try:
         response = requests.get(url, timeout=8)
@@ -130,7 +131,7 @@ def fetch_github_data(username):
 #     return "leetcode", u
 
 
-def parse_input(user_input):
+def parse_input(user_input: str) -> tuple[str,str]:
     """
     Parses a user input string (URL or raw username) to find a 
     platform and username.
@@ -292,7 +293,7 @@ def parse_input(user_input):
 #             st.warning("Your CSV must have 'Test' and 'Score' columns.")
 #     except Exception as e:
 #         st.error(f"Error plotting test scores: {e}")
-def get_performance_score(json_content):
+def get_performance_score(json_content: ResumeAchievements) -> int:
     platform, username = parse_input(json_content.platform_links[0])
     performance = 0
     if platform == 'leetcode':
