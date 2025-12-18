@@ -299,5 +299,26 @@ def result_dashboard():
     return render_template("result_dashboard.html")
 
 
+# Handler for 404 Not Found errors
+@app.errorhandler(404)
+def page_not_found(error):
+    # Pass the status code as a second return value
+    return render_template('404.html'), 404
+
+# Handler for 500 Internal Server Errors
+@app.errorhandler(500)
+def internal_server_error(error):
+    # In a real app, you might also want to log the original exception
+    # e.original_exception
+    return render_template('500.html'), 500
+
+
+# @app.errorhandler(Exception)
+# def handle_general_exception(e):
+#     # Default to 500 if the exception doesn't have a specific HTTP code
+#     code = getattr(e, 'code', 500)
+#     return render_template('error.html', error_code=code, message=str(e)), code
+
+
 if __name__ == "__main__":
     app.run()
