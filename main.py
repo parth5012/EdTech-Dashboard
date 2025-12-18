@@ -27,6 +27,7 @@ from utils.models import (
     Resume,
 )
 from utils.graphs import get_dashboard_workflow
+from sqlalchemy.orm import selectinload
 
 
 load_dotenv()
@@ -41,7 +42,6 @@ sentry_sdk.init(
 )
 
 resume_path = 0
-user_answers = {}
 
 # uri = os.getenv("URI")
 # app.config["SQLALCHEMY_DATABASE_URI"] = uri
@@ -225,10 +225,11 @@ def mock_interview():
     session["application_id"] = jobapplication.application_id
     db.session.add(interview)
     db.session.commit()
+    n_ques = len(ques.questions)
     return render_template(
         "mock.html",
         current_ques=0,
-        n_ques=len(ques.questions),
+        n_ques=n_ques,
         question=ques.questions[0],
         ques_obj=ques,
     )
@@ -241,36 +242,33 @@ def submit():
         ans = get_transcription(audio)
         # ans = "YO"
         ques = request.form["question"]
-        # Store ans in db
-        # storing in placeholder db for now
-        # if "user_answers" not in session:
-        #     session["user_answers"] = {}
+
         is_right = is_answer(ques, ans)
         # is_right = False
-        user_answers[ques] = (ans, is_right)
-        print(user_answers)
+        application_id = session["application_id"]
+        interview = MockInterview.query.filter_by(application_id=application_id).first()
+        question = InterviewQuestion(
+            interview_id=interview.interview_id, question_text=ques
+        )
+        db.session.add(question)
+        db.session.flush()
+        answer = InterviewAnswer(
+            question_id=question.question_id, transcription=ans, is_active=is_right
+        )
+        db.session.add(answer)
+        db.session.commit()
+        session['interview_id'] = interview.interview_id
         return jsonify({"is_answer": is_right, "message": "Your Answer is Submitted"})
 
 
 @app.route("/results")
 def results():
-    answers = user_answers
-    application_id = session["application_id"]
-    interview = MockInterview.query.filter_by(application_id=application_id).first()
-    # k = question and   v-> (answer,is_right)
-    for k in answers.keys():
-        question = InterviewQuestion(
-            interview_id=interview.interview_id, question_text=k
-        )
-        v = answers[k]
-        db.session.add(question)
-        db.session.flush()
-        answer = InterviewAnswer(
-            question_id=question.question_id, transcription=v[0], is_active=v[1]
-        )
-        db.session.add(answer)
-        db.session.commit()
-    return render_template("results.html", answers=answers)
+    id = session['interview_id']
+    questions = (InterviewQuestion.query.
+                 filter_by(interview_id=id).options(selectinload(InterviewQuestion.answers)).all())
+    
+    
+    return render_template("results.html", questions=questions)
 
 
 @app.route("/results_dashboard")

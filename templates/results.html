@@ -190,12 +190,12 @@
 
       <!-- Results Card -->
       <div class="results-card">
-        {% for question, data in answers.items() %}
+        {% for question in questions %}
         <div class="result-item">
-          <div class="question-text">{{ question }}</div>
-          <div class="answer-text">{{ data[0] }}</div>
+          <div class="question-text">{{ question.question_text }}</div>
+          <div class="answer-text">{{ question.answers[0].transcription }}</div>
           <div class="feedback {{ 'correct' if data[1] else 'incorrect' }}">
-            {% if data[1]%}
+            {% if question.answers[0].is_active%}
             <i class="fas fa-check-circle"></i>
             <span>Correct</span>
             {% else %}
