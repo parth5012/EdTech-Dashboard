@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import List
-from datetime import datetime
+from datetime import datetime, date
 from langchain_core.output_parsers import PydanticOutputParser
+
 
 class InterviewQues(BaseModel):
     categories: List[str] = Field(
@@ -17,13 +18,13 @@ parser1 = PydanticOutputParser(pydantic_object=InterviewQues)
 format_instructions1 = parser1.get_format_instructions()
 
 
-
 class ResumeAchievements(BaseModel):
     certifications: List[str]
     issuing_authority: List[str]
     certificate_links: List[str]
-    date_earned:datetime
+    # date_earned: str
     platform_links: List[str]
+
 
 parser2 = PydanticOutputParser(pydantic_object=ResumeAchievements)
 format_instructions2 = parser2.get_format_instructions()
