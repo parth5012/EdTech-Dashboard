@@ -53,7 +53,7 @@ def get_resume_content(resume: __file__) -> str:
 
 @traceable(name="Extracting Details From Resume")
 def get_achievements(resume_content: str) -> ResumeAchievements:
-    chain = prompt_extract | llm1 | parser2
+    chain = prompt_extract | llm1 | parser2 | RunnableLambda(lambda x: x.model_dump())
     res = chain.invoke({"resume_data": resume_content})
     print(res)
 
@@ -74,7 +74,7 @@ def get_readiness_score(resume_content: str) -> str:
 
 @traceable(name="Generate Interview Ques")
 def get_interview_ques(job_desc: str) -> InterviewQues:
-    chain = interview_prompt | llm2 | parser1
+    chain = interview_prompt | llm2 | parser1 | RunnableLambda(lambda x: x.model_dump())
     res = chain.invoke(job_desc)
     print(res)
     return res
