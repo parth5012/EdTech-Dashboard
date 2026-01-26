@@ -2,7 +2,12 @@ from flask import render_template, request, redirect, url_for, session, jsonify,
 import os
 from werkzeug.utils import secure_filename
 from utils.llms import (
+    get_achievements,
+    get_ats_score,
+    get_job_details,
+    get_readiness_score,
     get_resume_content,
+    get_str_output,
     is_answer,
     get_interview_ques,
 )
@@ -142,12 +147,12 @@ def dashboard():
     resume = Resume.query.filter_by(user_id=user_id).first()
     content = resume.resume_text
     desc = session["desc"]
-    CONFIG = {"metadata": {"thread_id": user_id}, "run_name": "Dashboard Calculations"}
-    dashboard_workflow = get_dashboard_workflow()
-    state = dashboard_workflow.invoke(
-        {"resume_text": content, "job_desc": desc}, config=CONFIG
-    )
-    details = state["job_details"]
+    # CONFIG = {"metadata": {"thread_id": user_id}, "run_name": "Dashboard Calculations"}
+    # dashboard_workflow = get_dashboard_workflow()
+    # state = dashboard_workflow.invoke(
+    #     {"resume_text": content, "job_desc": desc}, config=CONFIG
+    # )
+    details = get_job_details(desc)
     if not details["title"]:
         return redirect(url_for("home"))
     job_desc = JobDescription(
@@ -155,15 +160,15 @@ def dashboard():
     )
     db.session.add(job_desc)
     db.session.flush()
-    json_content = state["candidate_details"]
+    json_content = get_achievements(content)
     session["content"] = json_content
-    analysis_quote = state["analysis_quote"]
-    readiness_score = state["readiness_score"]
+    analysis_quote = get_str_output(content)
+    readiness_score = get_readiness_score(content)
     performance = 0
     # Slow since inference calls have high latency
     # ats = get_ats_score(content, session['desc'])
     # Latency Improvement
-    ats = state["ats"]["match_score"]
+    ats = get_ats_score(content,desc)["match_score"]
     # ats = 25
     n_crtf = len(json_content['certifications'])
     job_application = JobApplication(
