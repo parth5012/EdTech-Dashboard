@@ -1,7 +1,7 @@
 from utils.app import db,app
 import uuid
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import types, Integer, String, ForeignKey, Boolean
+from sqlalchemy import types, Integer, Float, String, ForeignKey, Boolean
 from datetime import datetime
 from dataclasses import dataclass
 
@@ -15,7 +15,7 @@ class User(db.Model):
     name: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     password_hash: Mapped[str] = mapped_column(String, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(types.DateTime, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(types.DateTime, default=datetime.now)
 
     # --- RELATIONSHIPS ---
     Resumes: Mapped[list["Resume"]] = relationship(back_populates="User")
@@ -38,7 +38,7 @@ class Resume(db.Model):
     )
     resume_text: Mapped[str] = mapped_column(String, nullable=False)
     uploaded_at: Mapped[datetime] = mapped_column(
-        types.DateTime, default=datetime.now()
+        types.DateTime, default=datetime.now
     )
 
     # --- RELATIONSHIPS ---
@@ -59,7 +59,7 @@ class JobDescription(db.Model):
     job_title: Mapped[str] = mapped_column(String, nullable=False)
     company_name: Mapped[str] = mapped_column(String, nullable=True)
     job_desc: Mapped[str] = mapped_column(String, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(types.DateTime, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(types.DateTime, default=datetime.now)
 
     # --- RELATIONSHIPS ---
     job_applications: Mapped[list["JobApplication"]] = relationship(
@@ -87,7 +87,7 @@ class JobApplication(db.Model):
         types.UUID,
         ForeignKey("JobDescriptions.job_description_id"),  # <-- FIX: Added target
     )
-    ats_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    ats_score: Mapped[float] = mapped_column(Float, nullable=False)
     certifications_count: Mapped[int] = mapped_column(Integer, nullable=False)
     keyword_analysis: Mapped[str] = mapped_column(
         String, nullable=True
@@ -95,7 +95,7 @@ class JobApplication(db.Model):
     analysis_summary: Mapped[str] = mapped_column(
         String, nullable=True
     )  # Added nullable=True
-    created_at: Mapped[datetime] = mapped_column(types.DateTime, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(types.DateTime, default=datetime.now)
 
     # --- RELATIONSHIPS ---
     User: Mapped["User"] = relationship(
@@ -125,7 +125,7 @@ class MockInterview(db.Model):
         String, nullable=True
     )  # Added nullable=True
     completed_at: Mapped[datetime] = mapped_column(
-        types.DateTime, default=datetime.now()
+        types.DateTime, default=datetime.now
     )
 
     # --- RELATIONSHIPS ---

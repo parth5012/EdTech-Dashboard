@@ -4,7 +4,7 @@ from utils.app import db
 from uuid import UUID
 from typing import List
 
-def get_transcription(audio: __file__) -> str:
+def get_transcription(audio: str) -> str:
     config = aai.TranscriptionConfig(speech_model=aai.SpeechModel.universal)
 
     transcript = aai.Transcriber(config=config).transcribe(audio)
@@ -34,7 +34,7 @@ def find_filler_word_count(answers: List[str]):
     fillers_per_question = [] # For the Bar Chart
     
     for ans in answers:
-        text = ans.transcribed_text.lower() if ans.transcribed_text else ""
+        text = ans.transcription.lower() if ans.transcription else ""
         count = sum(text.count(word) for word in filler_words)
         total_fillers += count
         fillers_per_question.append(count)

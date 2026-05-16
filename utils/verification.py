@@ -1,19 +1,13 @@
 import requests
-# """Fetch specific badge details"""
-url = "https://api.credly.com/v1/badges/bc86b51a-6aff-4815-a864-2d40b63d3966"
-# try:
-#     response = requests.get(url)
-#     response.raise_for_status()
-#     print( response.json())
-# except requests.exceptions.RequestException as e:
-#     print({"error": str(e)})
+
 
 def verify_public_badge(badge_url: str) -> bool:
-    response = requests.get(badge_url)
-    if response.status_code == 200 :
-        return True, "Badge found and valid."
-    else:
-        return False, "Badge not found or inaccessible."
+    try:
+        response = requests.get(badge_url, timeout=10)
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Badge verification error: {e}")
+        return False
 
 # public_url = "https://www.credly.com/badges/steKMkTDSVOoZ1RMhSIZwQ/public_url"
 # valid, msg = verify_public_badge(public_url)

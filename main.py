@@ -97,9 +97,8 @@ def login():
         password = request.form["password"]
 
         user = User.query.filter_by(email=email).first()
-        session["user"] = user
-        if user and check_password_hash(user.password, password):
-            session["user"] = user.username
+        if user and check_password_hash(user.password_hash, password):
+            session["user_id"] = user.id
             return redirect("/user_dashboard")
         else:
             return "Invalid email or password"
@@ -142,21 +141,20 @@ def upload_resume():
 def dashboard():
     if "desc" not in session:
         return redirect(url_for("home"))
+    if "user_id" not in session:
+        return redirect(url_for("login"))
     # user dict
     user_id = session["user_id"]
     resume = Resume.query.filter_by(user_id=user_id).first()
+    if not resume:
+        return redirect(url_for("home"))
     content = resume.resume_text
     desc = session["desc"]
-    # CONFIG = {"metadata": {"thread_id": user_id}, "run_name": "Dashboard Calculations"}
-    # dashboard_workflow = get_dashboard_workflow()
-    # state = dashboard_workflow.invoke(
-    #     {"resume_text": content, "job_desc": desc}, config=CONFIG
-    # )
     details = get_job_details(desc)
-    if not details["title"]:
+    if not details.get("title"):
         return redirect(url_for("home"))
     job_desc = JobDescription(
-        job_title=details["title"], company_name=details["company"], job_desc=desc
+        job_title=details["title"], company_name=details.get("company", ""), job_desc=desc
     )
     db.session.add(job_desc)
     db.session.flush()
@@ -168,9 +166,9 @@ def dashboard():
     # Slow since inference calls have high latency
     # ats = get_ats_score(content, session['desc'])
     # Latency Improvement
-    ats = get_ats_score(content,desc)["match_score"]
+    ats = get_ats_score(content, desc)["match_score"]
     # ats = 25
-    n_crtf = len(json_content['certifications'])
+    n_crtf = len(json_content["certifications"])
     job_application = JobApplication(
         user_id=user_id,
         resume_id=resume.resume_id,
@@ -180,9 +178,10 @@ def dashboard():
         certifications_count=n_crtf,
     )
     if json_content:
-        if json_content['platform_links']:
+        if json_content["platform_links"]:
             performance = get_performance_score(json_content=json_content)
-        job_application.query.update(values={"certifications_count": n_crtf})
+        # Update certifications_count on the instance directly (not via .query.update on an instance)
+        job_application.certifications_count = n_crtf
     else:
         performance = None
 
@@ -202,8 +201,8 @@ def dashboard():
 def certificates():
     content = session["content"]
     del session["content"]
-    if content['certificate_links']:
-        list = content['certificate_links']
+    if content["certificate_links"]:
+        list = content["certificate_links"]
         count = 0
         for i in range(len(list)):
             if verify_public_badge(list[i]):
@@ -223,6 +222,8 @@ def certificates():
 def mock_interview():
     if "desc" not in session:
         return redirect(url_for("home"))
+    if "user_id" not in session:
+        return redirect(url_for("login"))
     ques = get_interview_ques(session["desc"])
     user_id = session["user_id"]
     jobapplication = JobApplication.query.filter_by(user_id=user_id).first()
@@ -242,37 +243,40 @@ def mock_interview():
 
 @app.route("/api/mock-interview/submit", methods=["post"])
 def submit():
-    if request.method == "POST":
-        audio = request.files["audio"]
-        ans = get_transcription(audio)
-        # ans = "YO"
-        ques = request.form["question"]
+    audio = request.files["audio"]
+    ans = get_transcription(audio)
+    # ans = "YO"
+    ques = request.form["question"]
 
-        is_right = is_answer(ques, ans)
-        # is_right = False
-        application_id = session["application_id"]
-        interview = MockInterview.query.filter_by(application_id=application_id).first()
-        question = InterviewQuestion(
-            interview_id=interview.interview_id, question_text=ques
-        )
-        db.session.add(question)
-        db.session.flush()
-        answer = InterviewAnswer(
-            question_id=question.question_id, transcription=ans, is_active=is_right
-        )
-        db.session.add(answer)
-        db.session.commit()
-        session['interview_id'] = interview.interview_id
-        return jsonify({"is_answer": is_right, "message": "Your Answer is Submitted"})
+    is_right = is_answer(ques, ans)
+    # is_right = False
+    application_id = session["application_id"]
+    interview = MockInterview.query.filter_by(application_id=application_id).first()
+    question = InterviewQuestion(
+        interview_id=interview.interview_id, question_text=ques
+    )
+    db.session.add(question)
+    db.session.flush()
+    answer = InterviewAnswer(
+        question_id=question.question_id, transcription=ans, is_active=is_right
+    )
+    db.session.add(answer)
+    db.session.commit()
+    session["interview_id"] = interview.interview_id
+    return jsonify({"is_answer": is_right, "message": "Your Answer is Submitted"})
 
 
 @app.route("/results")
 def results():
-    id = session['interview_id']
-    questions = (InterviewQuestion.query.
-                 filter_by(interview_id=id).options(selectinload(InterviewQuestion.answers)).all())
-    
-    
+    if "interview_id" not in session:
+        return redirect(url_for("home"))
+    id = session["interview_id"]
+    questions = (
+        InterviewQuestion.query.filter_by(interview_id=id)
+        .options(selectinload(InterviewQuestion.answers))
+        .all()
+    )
+
     return render_template("results.html", questions=questions)
 
 
@@ -306,14 +310,15 @@ def result_dashboard():
 @app.errorhandler(404)
 def page_not_found(error):
     # Pass the status code as a second return value
-    return render_template('404.html'), 404
+    return render_template("404.html"), 404
+
 
 # Handler for 500 Internal Server Errors
 @app.errorhandler(500)
 def internal_server_error(error):
     # In a real app, you might also want to log the original exception
     # e.original_exception
-    return render_template('500.html'), 500
+    return render_template("500.html"), 500
 
 
 # @app.errorhandler(Exception)

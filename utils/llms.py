@@ -36,7 +36,7 @@ llm2 = ChatGroq(
 
 
 @traceable(name="Resume Reader")
-def get_resume_content(resume: __file__) -> str:
+def get_resume_content(resume: str) -> str:
     content = []
     if resume.endswith(".pdf"):
         loader = PyPDFLoader(resume)
@@ -63,19 +63,19 @@ def get_achievements(resume_content: str) -> ResumeAchievements:
 @traceable(name="Improvement One Liners")
 def get_str_output(resume_content: str) -> List[str]:
     chain = analyser_prompt | llm1 | StrOutputParser()
-    return chain.invoke(resume_content)
+    return chain.invoke({"resume_content": resume_content})
 
 
 @traceable(name="Readiness Score")
 def get_readiness_score(resume_content: str) -> str:
     chain = readiness_prompt | llm1 | StrOutputParser()
-    return chain.invoke(resume_content)
+    return chain.invoke({"resume_content": resume_content})
 
 
 @traceable(name="Generate Interview Ques")
 def get_interview_ques(job_desc: str) -> InterviewQues:
-    chain = interview_prompt | llm2 | parser1 | RunnableLambda(lambda x: x.model_dump())
-    res = chain.invoke(job_desc)
+    chain = interview_prompt | llm2 | parser1
+    res = chain.invoke({"job_desc": job_desc})
     print(res)
     return res
 
@@ -84,7 +84,9 @@ def get_interview_ques(job_desc: str) -> InterviewQues:
 def is_answer(ques: str, answer: str) -> bool:
     chain = check_prompt | llm1 | StrOutputParser()
     res = chain.invoke({"ques": ques, "ans": answer})
-    return bool(res)
+    # LLM returns the string "True" or "False".
+    # bool("False") is True in Python, so we must compare the string explicitly.
+    return res.strip().lower() == "true"
 
 
 @traceable(name="ATS score")
@@ -116,4 +118,4 @@ def generate_cover_letter(resume_content: str, job_desc: str) -> str:
 @traceable(name="Fetch Job Details")
 def get_job_details(job_desc: str) -> dict:
     chain = job_details_prompt | llm1 | JsonOutputParser()
-    return chain.invoke(job_desc)
+    return chain.invoke({"job_desc": job_desc})

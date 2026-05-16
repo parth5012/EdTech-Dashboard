@@ -146,7 +146,7 @@ job_details_prompt = PromptTemplate.from_template("""You are an expert Analyser 
                                                   Your task is to extract Job title and Company name from the job description given below in the form of a valid json
                                                   it should like like the example below:
                                                   {{"title":"Data Scintist",
-                                                  "company':"google"}}
+                                                  "company":"google"}}
                                                   
                                                   Job description:
                                                   {job_desc}""")
