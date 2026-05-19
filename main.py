@@ -116,7 +116,8 @@ def upload_resume():
     if request.method == "POST":
         resume = request.files["resume"]
         filename = secure_filename(resume.filename)
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        # filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        filepath = os.path.join('/tmp',filename)
         desc = request.form["job_description"]
         session["desc"] = desc
         resume.save(filepath)
