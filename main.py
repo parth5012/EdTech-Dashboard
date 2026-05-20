@@ -31,7 +31,7 @@ from utils.models import (
     JobDescription,
     Resume,
 )
-from utils.graphs import get_dashboard_workflow
+# from utils.graphs import get_dashboard_workflow
 from sqlalchemy.orm import selectinload
 
 
@@ -46,7 +46,6 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
 )
 
-resume_path = 0
 
 # uri = os.getenv("URI")
 # app.config["SQLALCHEMY_DATABASE_URI"] = uri

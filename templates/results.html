@@ -194,7 +194,7 @@
         <div class="result-item">
           <div class="question-text">{{ question.question_text }}</div>
           <div class="answer-text">{{ question.answers[0].transcription }}</div>
-          <div class="feedback {{ 'correct' if data[1] else 'incorrect' }}">
+          <div class="feedback {{ 'correct' if question.answers[0].is_active else 'incorrect' }}">
             {% if question.answers[0].is_active%}
             <i class="fas fa-check-circle"></i>
             <span>Correct</span>

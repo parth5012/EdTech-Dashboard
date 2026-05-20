@@ -536,7 +536,7 @@
 
       // Stop recording
       stopBtn.addEventListener("click", () => {
-        
+        if (mediaRecorder && mediaRecorder.state === "recording") {
         clearInterval(timerInterval);
         mediaRecorder.stop();
         mediaRecorder.stream.getTracks().forEach((track) => track.stop());
@@ -548,7 +548,7 @@
         recordBtn.disabled = false;
         stopBtn.disabled = true;
         submitBtn.disabled = false;
-      });
+     } });
 
       // Submit to backend
       submitBtn.addEventListener("click", async () => {
