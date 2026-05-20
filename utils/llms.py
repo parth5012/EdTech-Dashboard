@@ -1,3 +1,4 @@
+from langchain_core.exceptions import OutputParserException
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
@@ -38,12 +39,15 @@ llm2 = ChatGroq(
 @traceable(name="Resume Reader")
 def get_resume_content(resume: str) -> str:
     content = []
-    if resume.endswith(".pdf"):
-        loader = PyPDFLoader(resume)
-        content = loader.load()
-    elif resume.endswith(".docx"):
-        loader = Docx2txtLoader(resume)
-        content = loader.load()
+    try:
+        if resume.endswith(".pdf"):
+            loader = PyPDFLoader(resume)
+            content = loader.load()
+        elif resume.endswith(".docx"):
+            loader = Docx2txtLoader(resume)
+            content = loader.load()
+    except OutputParserException:
+        return 'Error!'
 
     resume_content = ""
     for page in content:

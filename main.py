@@ -121,6 +121,8 @@ def upload_resume():
         session["desc"] = desc
         resume.save(filepath)
         content = get_resume_content(filepath)
+        if content == 'Error!':
+            return redirect(url_for(""))
         email = request.form.get("email")
         user = User.query.filter_by(email=email).first()
         if not user:
