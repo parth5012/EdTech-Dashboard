@@ -245,15 +245,34 @@ def mock_interview():
 
 @app.route("/api/mock-interview/submit", methods=["post"])
 def submit():
-    audio = request.files["audio"]
-    ans = get_transcription(audio)
-    # ans = "YO"
-    ques = request.form["question"]
+    if "audio" not in request.files:
+        return jsonify({"error": "No audio file provided."}), 400
+    if "question" not in request.form:
+        return jsonify({"error": "No question provided."}), 400
 
-    is_right = is_answer(ques, ans)
-    # is_right = False
+    if "application_id" not in session:
+        return jsonify({"error": "Session expired. Please restart the interview."}), 401
+
     application_id = session["application_id"]
     interview = MockInterview.query.filter_by(application_id=application_id).first()
+    if not interview:
+        return jsonify({"error": "Invalid interview session. Please restart the interview."}), 401
+
+    audio = request.files["audio"]
+    ques = request.form["question"]
+
+    try:
+        ans = get_transcription(audio)
+    except Exception:
+        app.logger.exception("Transcription failed")
+        return jsonify({"error": "Transcription failed. Please try again."}), 502
+
+    try:
+        is_right = is_answer(ques, ans)
+    except Exception:
+        app.logger.exception("Answer evaluation failed")
+        return jsonify({"error": "Answer evaluation failed. Please try again."}), 502
+
     question = InterviewQuestion(
         interview_id=interview.interview_id, question_text=ques
     )
