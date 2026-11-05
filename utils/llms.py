@@ -90,7 +90,12 @@ def is_answer(ques: str, answer: str) -> bool:
     res = chain.invoke({"ques": ques, "ans": answer})
     # LLM returns the string "True" or "False".
     # bool("False") is True in Python, so we must compare the string explicitly.
-    return res.strip().lower() == "true"
+    normalized = res.strip().lower()
+    if normalized == "true":
+        return True
+    if normalized == "false":
+        return False
+    raise ValueError(f"Unexpected answer classification: {res!r}")
 
 
 @traceable(name="ATS score")
