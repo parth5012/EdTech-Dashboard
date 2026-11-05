@@ -259,7 +259,7 @@ def submit():
         return jsonify({"error": "Invalid interview session. Please restart the interview."}), 401
 
     audio = request.files["audio"]
-    ques = request.form["question"]
+    ques = request.form["question"].strip()
 
     try:
         ans = get_transcription(audio)

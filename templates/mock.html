@@ -383,8 +383,7 @@
             {{n_ques}}
           </div>
           <div class="question-text">
-            {{ question or "Tell me about yourself and why you're interested in
-            this position." }}
+            {{ question or "Tell me about yourself and why you're interested in this position." }}
           </div>
         </div>
 
@@ -554,7 +553,7 @@
       submitBtn.addEventListener("click", async () => {
         const formData = new FormData();
         formData.append("audio", audioBlob, "interview_answer.webm");
-        formData.append("question", ques.innerHTML);
+        formData.append("question", ques.textContent.trim());
         formData.append("user_id", '{{ user_id or "demo_user" }}'); // Add user ID from session
 
         // Show loading state
@@ -588,7 +587,7 @@
               ques_no.innerHTML = next_q_num;
 
               // 5. Update the question text (access index 7, which is safe)
-              ques.innerHTML = ques_list[next_q_num - 1];
+              ques.textContent = ques_list[next_q_num - 1];
 
               // 6. Re-enable the submit button
               submitBtn.disabled = false;
