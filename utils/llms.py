@@ -27,7 +27,7 @@ llm1 = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash-lite", api_key=os.getenv("GEMINI_API_KEY")
 )
 llm2 = ChatGroq(
-    model="qwen/qwen3-32b",
+    model="qwen/qwen3.8-27b",
     temperature=0,
     max_tokens=None,
     reasoning_format="parsed",
