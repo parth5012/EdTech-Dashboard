@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, jsonify, flash
 import os
+import uuid
 from werkzeug.utils import secure_filename
 from utils.llms import (
     get_achievements,
@@ -107,7 +108,86 @@ def login():
 
 @app.route("/user_dashboard")
 def user_dashboard():
-    return render_template("user_dashboard.html")
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    user_id = session["user_id"]
+    try:
+        user_id = uuid.UUID(str(user_id))
+    except (ValueError, TypeError, AttributeError):
+        session.pop("user_id", None)
+        return redirect(url_for("login"))
+    user = User.query.get(user_id)
+    if not user:
+        session.pop("user_id", None)
+        return redirect(url_for("login"))
+
+    apps = (
+        JobApplication.query.filter_by(user_id=user_id)
+        .order_by(JobApplication.created_at.asc())
+        .all()
+    )
+    latest_app = max(apps, key=lambda a: a.created_at, default=None)
+
+    avg_readiness = (sum(a.ats_score for a in apps) / len(apps)) if apps else 0
+    latest_ats = latest_app.ats_score if latest_app else 0
+    certifications = latest_app.certifications_count if latest_app else 0
+
+    app_ids = [a.application_id for a in apps]
+    interviews = (
+        MockInterview.query.filter(MockInterview.application_id.in_(app_ids)).all()
+        if app_ids
+        else []
+    )
+    interviews_done = len(interviews)
+
+    interview_ids = [iv.interview_id for iv in interviews]
+    questions = (
+        InterviewQuestion.query.filter(
+            InterviewQuestion.interview_id.in_(interview_ids)
+        ).all()
+        if interview_ids
+        else []
+    )
+    q_ids = [q.question_id for q in questions]
+    answers = (
+        InterviewAnswer.query.filter(InterviewAnswer.question_id.in_(q_ids)).all()
+        if q_ids
+        else []
+    )
+    total_answers = len(answers)
+    correct_answers = sum(1 for a in answers if a.is_active)
+    interview_accuracy = (
+        (correct_answers / total_answers * 100) if total_answers else 0
+    )
+
+    trend_labels = [a.created_at.strftime("%b %d") for a in apps]
+    trend_data = [a.ats_score for a in apps]
+
+    recent = sorted(apps, key=lambda a: a.created_at, reverse=True)[:5]
+    recent_rows = []
+    for a in recent:
+        jd = a.JobDescription
+        recent_rows.append(
+            {
+                "role": jd.job_title if jd else "—",
+                "company": jd.company_name if jd else "—",
+                "date": a.created_at.strftime("%b %d, %Y"),
+                "ats": round(a.ats_score, 1),
+            }
+        )
+
+    return render_template(
+        "user_dashboard.html",
+        user=user,
+        avg_readiness=round(avg_readiness, 1),
+        latest_ats=round(latest_ats, 1),
+        interviews_done=interviews_done,
+        certifications=certifications,
+        interview_accuracy=round(interview_accuracy, 1),
+        trend_labels=trend_labels,
+        trend_data=trend_data,
+        recent_rows=recent_rows,
+    )
 
 
 @app.route("/upload_resume", methods=["post"])
