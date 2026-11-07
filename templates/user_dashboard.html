@@ -64,7 +64,7 @@
             
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Hello, Student! 👋</h1>
+                    <h1 class="text-2xl font-bold text-gray-800">Hello, {{ user.name if user else 'Student' }}! 👋</h1>
                     <p class="text-gray-500 text-sm">Here is your daily placement readiness report.</p>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -80,10 +80,10 @@
                     <div class="h-10 w-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                     </div>
-                    <h3 class="text-3xl font-bold text-gray-800">75%</h3>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ avg_readiness }}%</h3>
                     <div class="flex justify-between items-center mt-1">
                         <span class="text-gray-500 text-sm font-medium">Avg Readiness</span>
-                        <span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-full">+5% this week</span>
+                        <span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-full">from ATS scores</span>
                     </div>
                 </div>
 
@@ -91,10 +91,10 @@
                     <div class="h-10 w-10 rounded-lg bg-red-100 text-red-500 flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
-                    <h3 class="text-3xl font-bold text-gray-800">82%</h3>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ latest_ats }}%</h3>
                     <div class="flex justify-between items-center mt-1">
                         <span class="text-gray-500 text-sm font-medium">Latest ATS Score</span>
-                        <span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-full">+8% vs last</span>
+                        <span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-full">latest application</span>
                     </div>
                 </div>
                 
@@ -102,7 +102,7 @@
                     <div class="h-10 w-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                     </div>
-                    <h3 class="text-3xl font-bold text-gray-800">4</h3>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ interviews_done }}</h3>
                     <div class="flex justify-between items-center mt-1">
                         <span class="text-gray-500 text-sm font-medium">Interviews Done</span>
                         <span class="text-blue-500 text-xs font-bold bg-blue-50 px-2 py-1 rounded-full">Active</span>
@@ -113,10 +113,10 @@
                     <div class="h-10 w-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3 class="text-3xl font-bold text-gray-800">4/6</h3>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ certifications }}</h3>
                     <div class="flex justify-between items-center mt-1">
                         <span class="text-gray-500 text-sm font-medium">Certifications</span>
-                        <span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-full">2 new</span>
+                        <span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-full">from latest app</span>
                     </div>
                 </div>
             </div>
@@ -157,20 +157,19 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 text-sm">
+                            {% for row in recent_rows %}
                             <tr class="hover:bg-gray-50 transition">
-                                <td class="p-4 font-semibold text-gray-800">Data Analyst</td>
-                                <td class="p-4 text-gray-600">Google</td>
-                                <td class="p-4 text-gray-500">Nov 27, 2025</td>
-                                <td class="p-4"><span class="font-bold text-green-600">85%</span></td>
+                                <td class="p-4 font-semibold text-gray-800">{{ row.role }}</td>
+                                <td class="p-4 text-gray-600">{{ row.company }}</td>
+                                <td class="p-4 text-gray-500">{{ row.date }}</td>
+                                <td class="p-4"><span class="font-bold text-green-600">{{ row.ats }}%</span></td>
                                 <td class="p-4"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">Analyzed</span></td>
                             </tr>
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="p-4 font-semibold text-gray-800">Backend Dev</td>
-                                <td class="p-4 text-gray-600">Amazon</td>
-                                <td class="p-4 text-gray-500">Nov 26, 2025</td>
-                                <td class="p-4"><span class="font-bold text-yellow-600">62%</span></td>
-                                <td class="p-4"><span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">Needs Edit</span></td>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="p-4 text-center text-gray-500">No applications yet.</td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -184,10 +183,10 @@
         new Chart(ctx1, {
             type: 'line',
             data: {
-                labels: ['Nov 1', 'Nov 5', 'Nov 10', 'Nov 15', 'Nov 20', 'Nov 25'],
+                labels: {{ trend_labels|tojson }},
                 datasets: [{
                     label: 'ATS Score',
-                    data: [65, 70, 68, 75, 82, 85],
+                    data: {{ trend_data|tojson }},
                     borderColor: '#2563EB', // Royal Blue
                     backgroundColor: 'rgba(37, 99, 235, 0.1)',
                     tension: 0.4,
@@ -203,7 +202,7 @@
             data: {
                 labels: ['Correct', 'Needs Work'],
                 datasets: [{
-                    data: [75, 25],
+                    data: [{{ interview_accuracy }}, {{ 100 - interview_accuracy }}],
                     backgroundColor: ['#10B981', '#F3F4F6'], // Green and Light Grey
                     borderWidth: 0
                 }]
