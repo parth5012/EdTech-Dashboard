@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, jsonify, flash
 import os
+import uuid
 from werkzeug.utils import secure_filename
 from utils.llms import (
     get_achievements,
@@ -110,6 +111,11 @@ def user_dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
     user_id = session["user_id"]
+    try:
+        user_id = uuid.UUID(str(user_id))
+    except (ValueError, TypeError, AttributeError):
+        session.pop("user_id", None)
+        return redirect(url_for("login"))
     user = User.query.get(user_id)
     if not user:
         session.pop("user_id", None)
@@ -120,7 +126,7 @@ def user_dashboard():
         .order_by(JobApplication.created_at.asc())
         .all()
     )
-    latest_app = apps[-1] if apps else None
+    latest_app = max(apps, key=lambda a: a.created_at, default=None)
 
     avg_readiness = (sum(a.ats_score for a in apps) / len(apps)) if apps else 0
     latest_ats = latest_app.ats_score if latest_app else 0
