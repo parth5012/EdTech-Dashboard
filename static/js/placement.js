@@ -170,75 +170,81 @@ function updateResumeAnalysisUI(data) {
 // Initialize Charts
 function initializeCharts() {
     // Skill Radar Chart
-    const skillCtx = document.getElementById('skillRadarChart').getContext('2d');
-    const skillChart = new Chart(skillCtx, {
-        type: 'radar',
-        data: {
-            labels: ['JavaScript', 'React', 'Node.js', 'Python', 'SQL', 'Data Structures'],
-            datasets: [{
-                label: 'Current Level',
-                data: [80, 70, 60, 85, 75, 65],
-                backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                borderColor: 'rgba(59, 130, 246, 1)',
-                borderWidth: 2,
-                pointBackgroundColor: 'rgba(59, 130, 246, 1)'
-            }, {
-                label: 'Target Level',
-                data: [90, 85, 80, 90, 85, 85],
-                backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                borderColor: 'rgba(16, 185, 129, 1)',
-                borderWidth: 2,
-                pointBackgroundColor: 'rgba(16, 185, 129, 1)'
-            }]
-        },
-        options: {
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        stepSize: 20
+    const skillCanvas = document.getElementById('skillRadarChart');
+    if (skillCanvas) {
+        const skillCtx = skillCanvas.getContext('2d');
+        new Chart(skillCtx, {
+            type: 'radar',
+            data: {
+                labels: ['JavaScript', 'React', 'Node.js', 'Python', 'SQL', 'Data Structures'],
+                datasets: [{
+                    label: 'Current Level',
+                    data: [80, 70, 60, 85, 75, 65],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)'
+                }, {
+                    label: 'Target Level',
+                    data: [90, 85, 80, 90, 85, 85],
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(16, 185, 129, 1)'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    // Progress Line Chart
+    const progressCanvas = document.getElementById('progressChart');
+    if (progressCanvas) {
+        const progressCtx = progressCanvas.getContext('2d');
+        new Chart(progressCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Overall Readiness',
+                    data: [45, 52, 58, 65, 70, 75],
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Resume Score',
+                    data: [50, 58, 62, 70, 76, 82],
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
                     }
                 }
-            },
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
-    
-    // Progress Line Chart
-    const progressCtx = document.getElementById('progressChart').getContext('2d');
-    const progressChart = new Chart(progressCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            datasets: [{
-                label: 'Overall Readiness',
-                data: [45, 52, 58, 65, 70, 75],
-                borderColor: 'rgba(59, 130, 246, 1)',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                tension: 0.4,
-                fill: true
-            }, {
-                label: 'Resume Score',
-                data: [50, 58, 62, 70, 76, 82],
-                borderColor: 'rgba(16, 185, 129, 1)',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100
-                }
             }
-        }
-    });
+        });
+    }
 }
 
 // API Service Functions for Python Backend Integration
