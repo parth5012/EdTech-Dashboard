@@ -17,18 +17,21 @@ function setupNavigation() {
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (!href || !href.startsWith('#')) return;
+            const target = document.getElementById(href.substring(1));
+            if (!target || !target.classList.contains('content-section')) return;
             e.preventDefault();
-            
+
             // Remove active class from all links and sections
             navLinks.forEach(nav => nav.parentElement.classList.remove('active'));
             contentSections.forEach(section => section.classList.remove('active'));
-            
+
             // Add active class to clicked link
             this.parentElement.classList.add('active');
-            
+
             // Show corresponding section
-            const targetId = this.getAttribute('href').substring(1);
-            document.getElementById(targetId).classList.add('active');
+            target.classList.add('active');
         });
     });
 }
