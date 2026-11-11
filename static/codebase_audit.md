@@ -137,21 +137,22 @@ This line executes a variable assignment at **import time** (harmless), but the 
 
 ## 🟠 Security Vulnerabilities
 
-### 10. Secret key can be `None`
+### 10. Secret key can be `None` — RESOLVED (ticket #7)
 **File:** `utils/app.py:13`
 
 ```python
-app.secret_key = os.getenv('FLASK_API_KEY')
+app.secret_key = os.getenv('FLASK_API_KEY')  # OLD — replaced by SECRET_KEY below
 ```
-If `FLASK_API_KEY` is missing from `.env`, `secret_key` becomes `None`. Flask will refuse to use cookie-based sessions securely, making the app either crash or use a predictable empty key.
+If the secret env var is missing from `.env`, `secret_key` becomes `None`. Flask will refuse to use cookie-based sessions securely, making the app either crash or use a predictable empty key.
 
-**Fix:** Add a guard:
+**Fix (applied):** dedicated `SECRET_KEY` env var + hardening:
 ```python
-secret_key = os.getenv('FLASK_API_KEY')
-if not secret_key:
-    raise RuntimeError("FLASK_API_KEY is not set!")
-app.secret_key = secret_key
+app.secret_key = os.getenv('SECRET_KEY')
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
 ```
+⚠️ Deployment must now set `SECRET_KEY` (not `FLASK_API_KEY`) in the environment.
 
 ---
 
