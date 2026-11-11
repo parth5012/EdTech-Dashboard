@@ -4,14 +4,15 @@ Uses an in-memory-safe SQLite file override so tests never touch the real DB.
 """
 
 import os
+from datetime import timedelta
+
+import pytest  # noqa: E402
 
 from utils.app import app, db  # noqa: E402
 from utils.models import User  # noqa: E402
 from werkzeug.security import generate_password_hash  # noqa: E402
 
 import main  # noqa: E402,F401  (registers routes)
-
-TEST_DB_FILE = "/tmp/opencode/test_auth.db"  # matches conftest URI default
 
 
 def _create_user(email, password="password123", name="Test User"):
@@ -23,9 +24,6 @@ def _create_user(email, password="password123", name="Test User"):
     db.session.add(user)
     db.session.commit()
     return user
-
-
-import pytest  # noqa: E402
 
 
 @pytest.fixture()
@@ -55,8 +53,7 @@ def test_login_success_sets_session_and_redirects(client):
     assert resp.headers["Location"] == "/user_dashboard"
     with client.session_transaction() as sess:
         assert sess["user_id"] == user.id
-        # decision 1: permanent session on login success
-        assert sess.permanent is True
+        assert sess.permanent is True  # permanent cookie per session-hardening decision
 
 
 def test_login_wrong_password_flashes_and_rerenders(client):
@@ -86,7 +83,7 @@ def test_login_unknown_email_flashes_and_rerenders(client):
 def test_login_missing_fields_flash(client):
     resp = client.post("/login", data={"email": "", "password": ""})
     assert resp.status_code == 200
-    assert b"required" in resp.data
+    assert b"Email and password are required." in resp.data
 
 
 def test_signup_rejects_empty_fields(client):
@@ -96,7 +93,7 @@ def test_signup_rejects_empty_fields(client):
         follow_redirects=True,
     )
     assert resp.status_code == 200
-    assert b"required" in resp.data or b"required." in resp.data
+    assert b"All fields are required." in resp.data
     with app.app_context():
         assert User.query.filter_by(email="a@example.com").first() is None
 
@@ -108,7 +105,7 @@ def test_signup_rejects_short_password(client):
         follow_redirects=True,
     )
     assert resp.status_code == 200
-    assert b"8" in resp.data
+    assert b"Password must be at least 8 characters long." in resp.data
     with app.app_context():
         assert User.query.filter_by(email="shortpw@example.com").first() is None
 
@@ -162,6 +159,4 @@ def test_session_cookie_hardening_configured():
     assert app.secret_key is not None
     assert app.config["SESSION_COOKIE_HTTPONLY"] is True
     assert app.config["SESSION_COOKIE_SAMESITE"] == "Lax"
-    from datetime import timedelta
-
     assert app.config["PERMANENT_SESSION_LIFETIME"] == timedelta(days=7)
