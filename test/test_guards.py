@@ -2,22 +2,7 @@
 
 import pytest  # noqa: E402
 
-from utils.app import app, db  # noqa: E402
-from utils.models import User  # noqa: E402
-from werkzeug.security import generate_password_hash  # noqa: E402
-
-import main  # noqa: E402,F401  (registers routes)
-
-
-@pytest.fixture()
-def client():
-    with app.app_context():
-        db.create_all()
-        db.session.query(User).delete()
-        db.session.commit()
-    with app.test_client() as c:
-        with app.app_context():
-            yield c
+import main  # noqa: E402,F401  (registers routes; client fixture comes from conftest.py)
 
 
 @pytest.mark.parametrize(
