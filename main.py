@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import render_template, request, redirect, url_for, session, jsonify, flash
 import os
 import uuid
@@ -34,6 +36,18 @@ from utils.models import (
 )
 # from utils.graphs import get_dashboard_workflow
 from sqlalchemy.orm import selectinload
+
+
+def login_required(view):
+    """Redirect unauthenticated requests to /login (no ?next= support by design)."""
+
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect(url_for("login"))
+        return view(*args, **kwargs)
+
+    return wrapped
 
 
 load_dotenv()
@@ -124,9 +138,8 @@ def logout():
 
 
 @app.route("/user_dashboard")
+@login_required
 def user_dashboard():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
     user_id = session["user_id"]
     try:
         user_id = uuid.UUID(str(user_id))
@@ -237,11 +250,10 @@ def upload_resume():
 
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
     if "desc" not in session:
         return redirect(url_for("home"))
-    if "user_id" not in session:
-        return redirect(url_for("login"))
     # user dict
     user_id = session["user_id"]
     resume = Resume.query.filter_by(user_id=user_id).first()
@@ -297,6 +309,7 @@ def dashboard():
 
 
 @app.route("/dashboard/certificates")
+@login_required
 def certificates():
     content = session["content"]
     del session["content"]
@@ -318,11 +331,10 @@ def certificates():
 
 
 @app.route("/mock", methods=["get", "post"])
+@login_required
 def mock_interview():
     if "desc" not in session:
         return redirect(url_for("home"))
-    if "user_id" not in session:
-        return redirect(url_for("login"))
     ques = get_interview_ques(session["desc"])
     user_id = session["user_id"]
     jobapplication = JobApplication.query.filter_by(user_id=user_id).first()
@@ -385,6 +397,7 @@ def submit():
 
 
 @app.route("/results")
+@login_required
 def results():
     if "interview_id" not in session:
         return redirect(url_for("home"))
