@@ -11,7 +11,10 @@ load_dotenv()
 
 
 app = Flask(__name__,template_folder='../templates')
-app.secret_key = os.getenv('SECRET_KEY')
+_secret_key = os.getenv("SECRET_KEY")
+if not _secret_key:
+    raise RuntimeError("SECRET_KEY environment variable must be set")
+app.secret_key = _secret_key
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)

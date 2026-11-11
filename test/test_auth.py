@@ -129,6 +129,39 @@ def test_signup_success_hashes_password_and_redirects_to_login(client):
         assert user.password_hash != "password123"  # hashed, not plaintext
 
 
+def test_login_clears_stale_session_keys(client):
+    user = _create_user("stale@example.com", password="password123")
+    with client.session_transaction() as sess:
+        sess["desc"] = "leftover from a previous user"
+    resp = client.post(
+        "/login",
+        data={"email": user.email, "password": "password123"},
+    )
+    assert resp.status_code == 302
+    with client.session_transaction() as sess:
+        assert "desc" not in sess
+        assert sess["user_id"] == user.id
+
+
+def test_login_email_case_insensitive(client):
+    _create_user("mixed@example.com", password="password123")
+    resp = client.post(
+        "/login",
+        data={"email": "MIXED@Example.com", "password": "password123"},
+    )
+    assert resp.status_code == 302
+    assert resp.headers["Location"] == "/user_dashboard"
+
+
+def test_signup_persists_email_lowercased(client):
+    client.post(
+        "/signup",
+        data={"username": "lower", "email": "UPPER@Example.COM", "password": "password123"},
+    )
+    with app.app_context():
+        assert User.query.filter_by(email="upper@example.com").first() is not None
+
+
 def test_logout_clears_session_and_redirects_to_login(client):
     user = _create_user("logout@example.com", password="password123")
     client.post(

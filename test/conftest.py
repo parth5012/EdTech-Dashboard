@@ -10,8 +10,12 @@ os.environ.setdefault("SECRET_KEY", "test-secret-key")
 os.environ.setdefault("GEMINI_API_KEY", "dummy-test-key")
 os.environ.setdefault("GROQ_API_KEY", "dummy-test-key")
 
-TEST_DB_FILE = "/tmp/opencode/test_auth.db"
-os.environ.setdefault("URI", f"sqlite:///{TEST_DB_FILE}")
+import tempfile
+
+TEST_DB_FILE = os.path.join(tempfile.mkdtemp(), "test_auth.db")
+# Direct assignment (not setdefault) so an outer URI can never point the
+# destructive db.session.query(User).delete() fixture at a real database.
+os.environ["URI"] = f"sqlite:///{TEST_DB_FILE}"
 
 import pytest  # noqa: E402
 

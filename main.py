@@ -87,6 +87,7 @@ def signup():
         if not username or not email or not password:
             flash("All fields are required.")
             return redirect("/signup")
+        email = email.lower()
         if len(password) < 8:
             flash("Password must be at least 8 characters long.")
             return redirect("/signup")
@@ -118,8 +119,9 @@ def login():
             flash("Email and password are required.")
             return render_template("login.html")
 
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email.lower()).first()
         if user and check_password_hash(user.password_hash, password):
+            session.clear()
             session["user_id"] = user.id
             session.permanent = True
             return redirect("/user_dashboard")
