@@ -317,12 +317,13 @@
           <p>Login to continue your placement journey</p>
         </div>
 
-        <form id="loginForm">
+        <form id="loginForm" method="POST" action="/login">
           <div class="form-group">
             <label for="email">Email</label>
             <input
               type="email"
               id="email"
+              name="email"
               placeholder="Enter your email"
               required
             />
@@ -333,6 +334,7 @@
             <input
               type="password"
               id="password"
+              name="password"
               placeholder="Enter your password"
               required
             />
@@ -370,22 +372,6 @@
     <script>
       // Initialize Lucide icons
       lucide.createIcons();
-
-      document
-        .getElementById("loginForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-
-          const email = document.getElementById("email").value;
-          const password = document.getElementById("password").value;
-
-          // Simple validation
-          if (email && password) {
-            // alert('Login functionality would be connected to backend here.\n\nEmail: ' + email);
-            window.location.href = "/user_dashboard";
-            // In a real application, you would send this to your backend
-          }
-        });
     </script>
   </body>
 </html>

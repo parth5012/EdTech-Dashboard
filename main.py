@@ -66,16 +66,19 @@ def home():
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        username = request.form["username"]
-        email = request.form["email"]
-        # retrieving all emails
-        emails = db.session.query(User.email).all()
-        email_list = [email[0] for email in emails]
-        print(email_list)
-        if email in email_list:
+        username = request.form.get("username", "").strip()
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+
+        if not username or not email or not password:
+            flash("All fields are required.")
+            return redirect("/signup")
+        if len(password) < 8:
+            flash("Password must be at least 8 characters long.")
+            return redirect("/signup")
+        if User.query.filter_by(email=email).first():
             flash("Email already exists!!")
             return redirect("/login")
-        password = request.form["password"]
 
         # Hash password using Werkzeug
         hashed_password = generate_password_hash(password)
@@ -84,6 +87,7 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
+        flash("Account created. Please log in.")
         return redirect("/login")
 
     return render_template("signup.html")
@@ -93,17 +97,30 @@ def signup():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+
+        if not email or not password:
+            flash("Email and password are required.")
+            return render_template("login.html")
 
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password_hash, password):
             session["user_id"] = user.id
+            session.permanent = True
             return redirect("/user_dashboard")
-        else:
-            return "Invalid email or password"
+
+        flash("Invalid email or password")
+        return render_template("login.html")
 
     return render_template("login.html")
+
+
+# Logout Route
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
 
 
 @app.route("/user_dashboard")
