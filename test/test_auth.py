@@ -26,17 +26,6 @@ def _create_user(email, password="password123", name="Test User"):
     return user
 
 
-@pytest.fixture()
-def client():
-    with app.app_context():
-        db.create_all()
-        db.session.query(User).delete()
-        db.session.commit()
-    with app.test_client() as c:
-        with app.app_context():
-            yield c
-
-
 def test_get_login_renders_page(client):
     resp = client.get("/login")
     assert resp.status_code == 200
