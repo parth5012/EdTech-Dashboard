@@ -2,9 +2,17 @@ import requests
 
 
 def verify_public_badge(badge_url: str) -> bool:
+    if not badge_url:
+        return False
     try:
         response = requests.get(badge_url, timeout=10)
         return response.status_code == 200
+    except requests.Timeout:
+        print(f"Badge verification timed out: {badge_url}")
+        return False
+    except requests.RequestException as e:
+        print(f"Badge verification error: {e}")
+        return False
     except Exception as e:
         print(f"Badge verification error: {e}")
         return False
