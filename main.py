@@ -313,21 +313,24 @@ def dashboard():
 @app.route("/dashboard/certificates")
 @login_required
 def certificates():
-    content = session["content"]
-    del session["content"]
-    if content["certificate_links"]:
-        list = content["certificate_links"]
-        count = 0
-        for i in range(len(list)):
-            if verify_public_badge(list[i]):
-                count += 1
-    else:
-        count = 0
+    content = session.get("content")
+    if not isinstance(content, dict):
+        flash("No resume analysis available. Please analyze a resume first.")
+        return redirect(url_for("home"))
+
+    certifications = content.get("certifications") or []
+    badge_links = content.get("certificate_links") or []
+    count = 0
+    for link in badge_links:
+        if verify_public_badge(link):
+            count += 1
+
+    # Keep session content intact so the page remains reachable on refresh.
     return render_template(
         "certificates.html",
-        total_crtf=len(content["certifications"]),
+        total_crtf=len(certifications),
         crtf_count=count,
-        pending_crtf=len(content["certifications"]) - count,
+        pending_crtf=len(certifications) - count,
         content=content,
     )
 
