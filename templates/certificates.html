@@ -440,6 +440,21 @@
                 </div>
             </div>
 
+            <div class="filters" style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+                <select id="categoryFilter" style="padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;">
+                    <option value="all">All Categories</option>
+                    <option value="technical">Technical</option>
+                    <option value="language">Language</option>
+                    <option value="soft-skills">Soft Skills</option>
+                </select>
+                <select id="statusFilter" style="padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;">
+                    <option value="all">All Status</option>
+                    <option value="verified">Verified</option>
+                    <option value="pending">Pending</option>
+                </select>
+                <input id="searchInput" type="text" placeholder="Search certificates..." style="padding:8px 12px;border:1px solid #e2e8f0;border-radius:6px;flex:1;min-width:200px;">
+            </div>
+
             <div class="certificates-grid" id="certificatesGrid">
                 {% for i in range(total_crtf) %}
                     <div class="certificate-card" data-category="technical" data-status="verified">
@@ -696,33 +711,30 @@
         const statusFilter = document.getElementById('statusFilter');
         const searchInput = document.getElementById('searchInput');
         const certificatesGrid = document.getElementById('certificatesGrid');
-        const cards = certificatesGrid.querySelectorAll('.certificate-card');
+        const cards = certificatesGrid ? Array.from(certificatesGrid.querySelectorAll('.certificate-card')) : [];
 
         function filterCertificates() {
-            const category = categoryFilter.value;
-            const status = statusFilter.value;
-            const search = searchInput.value.toLowerCase();
+            if (!certificatesGrid) return;
+            const category = categoryFilter ? categoryFilter.value : 'all';
+            const status = statusFilter ? statusFilter.value : 'all';
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
 
             cards.forEach(card => {
-                const cardCategory = card.dataset.category;
-                const cardStatus = card.dataset.status;
-                const cardText = card.textContent.toLowerCase();
+                const cardCategory = card.dataset.category || '';
+                const cardStatus = card.dataset.status || '';
+                const cardText = (card.textContent || '').toLowerCase();
 
                 const matchesCategory = category === 'all' || cardCategory === category;
                 const matchesStatus = status === 'all' || cardStatus === status;
                 const matchesSearch = cardText.includes(search);
 
-                if (matchesCategory && matchesStatus && matchesSearch) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = (matchesCategory && matchesStatus && matchesSearch) ? 'block' : 'none';
             });
         }
 
-        categoryFilter.addEventListener('change', filterCertificates);
-        statusFilter.addEventListener('change', filterCertificates);
-        searchInput.addEventListener('input', filterCertificates);
+        if (categoryFilter) categoryFilter.addEventListener('change', filterCertificates);
+        if (statusFilter) statusFilter.addEventListener('change', filterCertificates);
+        if (searchInput) searchInput.addEventListener('input', filterCertificates);
 
         // Button interactions
         document.querySelectorAll('.btn').forEach(btn => {
@@ -736,7 +748,8 @@
         // Card click
         document.querySelectorAll('.certificate-card').forEach(card => {
             card.addEventListener('click', () => {
-                const title = card.querySelector('.cert-title').textContent;
+                const titleEl = card.querySelector('.cert-title');
+                const title = titleEl ? titleEl.textContent : '';
                 console.log(`Opened certificate: ${title}`);
             });
         });
