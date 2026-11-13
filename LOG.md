@@ -1,5 +1,13 @@
 # LOG
 
+## 2026-11-13 — Wayfinder map #9 shipped (branch `feat/map-9-certificates`, PR #119)
+
+**Status: Done** (all 3 tickets closed; PR filed + babysat; NOT MERGED)
+- Tickets #10/#11/#12 closed; map #9 closed.
+- CI: GitGuardian + Vercel pass. CodeRabbit 1 minor finding applied (unsupported category filters removed).
+- OCR skipped (llm endpoint unavailable in env).
+- Hand off to merge-pr.
+
 ## 2026-11-10 — Wayfinder map #5 shipped (branch `wf/5-auth`, PR #118)
 
 **Status: Done** (all 3 tickets closed; PR filed + watched; NOT MERGED)
