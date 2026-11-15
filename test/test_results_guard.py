@@ -31,6 +31,20 @@ def test_results_without_interview_id_redirect_renders_flash_on_home(client):
     assert b"Please complete an interview first" in resp.data
 
 
+def test_results_with_none_interview_id_redirects_and_flashes(client):
+    user_id = uuid.uuid4()
+    with client.session_transaction() as sess:
+        sess["user_id"] = user_id
+        sess["interview_id"] = None
+
+    resp = client.get("/results", follow_redirects=False)
+    assert resp.status_code == 302
+    assert resp.headers["Location"] == "/"
+    with client.session_transaction() as sess:
+        flashes = sess.get("_flashes", [])
+        assert ("error", "Please complete an interview first") in flashes
+
+
 def test_results_template_renders_no_answer_recorded(client):
     with app.app_context():
         class DummyQuestion:
