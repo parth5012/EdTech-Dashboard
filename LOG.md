@@ -1,5 +1,17 @@
 # LOG
 
+## 2026-11-15 — Wayfinder map #17 shipped (branch `ch/wayfinder-17-ship`)
+
+**Status: Done** (both child tickets closed; PR filed + babysat; NOT MERGED)
+- Tickets #18/#19 closed; map #17 resolved.
+- **Phase 1 (HITL)**: None (both child tickets AFK).
+- **Phase 2 (AFK, single-PR mode — 2 code-changing tickets < 5)**:
+  - #18: Added session guard and flash redirect on `/results` when `interview_id` is missing in session.
+  - #19: Guarded empty `question.answers` in `templates/results.html` to render 'No answer recorded' instead of raising `IndexError`.
+  - Test coverage added in `test/test_results_guard.py` (22 total tests passing).
+- **PR**: Filed via pr skill template, linked, and babysat.
+- Hand off to merge-pr.
+
 ## 2026-11-13 — Wayfinder map #9 shipped (branch `feat/map-9-certificates`, PR #119)
 
 **Status: Done** (all 3 tickets closed; PR filed + babysat; NOT MERGED)
