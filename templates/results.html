@@ -193,9 +193,10 @@
         {% for question in questions %}
         <div class="result-item">
           <div class="question-text">{{ question.question_text }}</div>
-          <div class="answer-text">{{ question.answers[0].transcription }}</div>
+          {% if question.answers and question.answers|length > 0 %}
+          <div class="answer-text">{{ question.answers[0].transcription or 'No answer recorded' }}</div>
           <div class="feedback {{ 'correct' if question.answers[0].is_active else 'incorrect' }}">
-            {% if question.answers[0].is_active%}
+            {% if question.answers[0].is_active %}
             <i class="fas fa-check-circle"></i>
             <span>Correct</span>
             {% else %}
@@ -203,6 +204,13 @@
             <span>Incorrect</span>
             {% endif %}
           </div>
+          {% else %}
+          <div class="answer-text">No answer recorded</div>
+          <div class="feedback incorrect">
+            <i class="fas fa-times-circle"></i>
+            <span>Incorrect</span>
+          </div>
+          {% endif %}
         </div>
         {% endfor %}
       </div>
