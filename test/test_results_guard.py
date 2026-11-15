@@ -2,6 +2,7 @@ import uuid
 from flask import session, get_flashed_messages
 from utils.models import User, MockInterview, InterviewQuestion, InterviewAnswer
 from utils.app import app, db
+import main  # noqa: E402, F401
 
 
 def test_results_without_interview_id_redirects_and_flashes(client):
@@ -18,6 +19,16 @@ def test_results_without_interview_id_redirects_and_flashes(client):
         # Flask stores _flashes in session: list of (category, message)
         flashes = sess.get("_flashes", [])
         assert ("error", "Please complete an interview first") in flashes
+
+
+def test_results_without_interview_id_redirect_renders_flash_on_home(client):
+    user_id = uuid.uuid4()
+    with client.session_transaction() as sess:
+        sess["user_id"] = user_id
+
+    resp = client.get("/results", follow_redirects=True)
+    assert resp.status_code == 200
+    assert b"Please complete an interview first" in resp.data
 
 
 def test_results_template_renders_no_answer_recorded(client):

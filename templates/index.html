@@ -43,6 +43,14 @@
       </div>
     </header>
 
+    {% for message in get_flashed_messages() %}
+      <div class="max-w-7xl mx-auto px-6 pt-6">
+        <div class="px-4 py-3 rounded-lg bg-red-50 text-red-700 border border-red-200">
+          {{ message }}
+        </div>
+      </div>
+    {% endfor %}
+
     <!-- Hero Section -->
     <section
       class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center"
