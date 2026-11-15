@@ -404,7 +404,7 @@ def submit():
 @app.route("/results")
 @login_required
 def results():
-    if "interview_id" not in session:
+    if not session.get("interview_id"):
         flash("Please complete an interview first", "error")
         return redirect(url_for("home"))
     id = session["interview_id"]
